@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('Ficha do Cliente - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title text-uppercase" th:text="${cliente.nome}">NOME DO CLIENTE</h1>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-primary-custom" style="background: var(--col-aguardando); color: #000;" data-bs-toggle="modal" data-bs-target="#modalEditarCliente">
+        <i data-lucide="user-cog" width="16" height="16"></i> Editar Cliente
+      </button>
+      <a href="/clientes" class="btn-outline-custom">
+        <i data-lucide="arrow-left" width="16" height="16"></i> Voltar à Lista
+      </a>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-7 mb-3">
+      <div class="glass-card h-100" style="border-top: 3px solid var(--col-aberta);">
+        <div class="glass-header" style="color: var(--col-aberta);"><i data-lucide="contact" width="20" height="20" class="me-2"></i> Dados Cadastrais</div>
+        <div class="card-body p-4 row m-0">
+          <div class="col-6">
+            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px; display: block; margin-bottom: 4px;">Nome Completo</span>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 16px;" th:text="${cliente.nome}"></div>
+          </div>
+          <div class="col-6">
+            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px; display: block; margin-bottom: 4px;">CPF / CNPJ</span>
+            <div style="font-size: 14px; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 16px;" th:text="${cliente.cpfCnpj != null && !cliente.cpfCnpj.isBlank() ? cliente.cpfCnpj : '-'}"></div>
+          </div>
+          <div class="col-6">
+            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px; display: block; margin-bottom: 4px;">Celular</span>
+            <div style="font-size: 14px; font-family: var(--font-mono); color: var(--text-primary); margin-bottom: 16px;" th:text="${cliente.celular != null && !cliente.celular.isBlank() ? cliente.celular : '-'}"></div>
+          </div>
+          <div class="col-6">
+            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px; display: block; margin-bottom: 4px;">E-mail</span>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-bottom: 16px;" th:text="${cliente.email != null && !cliente.email.isBlank() ? cliente.email : '-'}"></div>
+          </div>
+          <div class="col-12 mt-2 pt-3 border-top" style="border-color: var(--border-subtle) !important;">
+            <span class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px; display: block; margin-bottom: 4px;">Endereço Completo</span>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text-primary);" th:text="${(cliente.endereco != null ? cliente.endereco : '') + (cliente.bairro != null ? ', ' + cliente.bairro : '') + (cliente.cidade != null ? ' - ' + cliente.cidade : '')}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5 mb-3">
+      <div class="glass-card h-100" style="border-top: 3px solid var(--col-aguardando);">
+        <div class="glass-header" style="color: var(--col-aguardando);"><i data-lucide="car" width="20" height="20" class="me-2"></i> Veículos / Equipamentos</div>
+        <div class="card-body p-0">
+          <div th:each="v : ${cliente.veiculos}" style="padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);" th:text="${v.modelo}"></div>
+              <div style="font-size: 12px; color: var(--text-secondary);" th:text="${v.ano != null ? 'Ano: ' + v.ano : ''}"></div>
+            </div>
+            <span style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-mid); padding: 4px 12px; border-radius: 99px; font-family: var(--font-mono); font-size: 12px; color: var(--col-aberta);" th:text="${v.placaChassi}">ABC-1234</span>
+          </div>
+          <div class="p-4 text-center text-muted small" th:if="${#lists.isEmpty(cliente.veiculos)}">
+            Nenhum veículo registrado para este cliente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="glass-header" style="color: var(--text-primary);"><i data-lucide="clock" width="20" height="20" class="me-2" style="color: var(--col-servico);"></i> Histórico de Ordens de Serviço</div>
+    <div class="table-responsive">
+      <table class="table-dark-custom">
+        <thead style="background: rgba(0,0,0,0.2);">
+        <tr>
+          <th class="ps-4">Nº O.S.</th>
+          <th>Data Emissão</th>
+          <th>Veículo</th>
+          <th>Problema Relatado</th>
+          <th>Situação</th>
+          <th class="text-end">Valor R$</th>
+          <th class="text-center pe-4">Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="os : ${historicoOs}">
+          <td class="ps-4 fw-bold" style="color: var(--col-aberta); font-family: var(--font-mono); font-size: 14px;" th:text="'#' + ${os.numeroOs}"></td>
+          <td style="color: var(--text-secondary); font-size: 13px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy')}"></td>
+          <td style="font-weight: 500;" th:text="${os.veiculo.modelo}"></td>
+          <td class="text-muted text-truncate" style="max-width: 250px; font-size: 12px;" th:text="${os.problemaReclamado}"></td>
+          <td>
+             <span class="badge-custom"
+                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: rgba(59,130,246,0.15); border-color: var(--col-aberta)' :
+                             (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: rgba(245,158,11,0.15); border-color: var(--col-aguardando)' :
+                             (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: rgba(6,182,212,0.15); border-color: var(--col-servico)' :
+                             'color: var(--col-encerrada); background: rgba(34,197,94,0.15); border-color: var(--col-encerrada)'))}"
+                   th:text="${os.situacao}">
+             </span>
+          </td>
+          <td class="text-end fw-bold" style="font-family: var(--font-mono); color: var(--text-primary);" th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+          <td class="text-center pe-4">
+            <a th:href="@{/os/{id}(id=${os.id})}" class="btn-outline-custom" style="padding: 4px 10px;">
+              <i data-lucide="external-link" width="14" height="14"></i> Abrir
+            </a>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(historicoOs)}">
+          <td colspan="7" class="text-center py-5" style="color: var(--text-muted);">
+            <i data-lucide="file-x" width="40" height="40" class="mb-2 opacity-50"></i><br>
+            Este cliente ainda não possui nenhuma Ordem de Serviço.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="modal fade" id="modalEditarCliente" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0" style="border-top: 3px solid var(--col-aguardando) !important;">
+      <div class="modal-header py-3">
+        <h6 class="modal-title" style="font-family: var(--font-display); letter-spacing: 1px; color: var(--text-primary);">
+          <i data-lucide="user-cog" width="20" height="20" class="me-2" style="color: var(--col-aguardando);"></i> EDITAR DADOS DO CLIENTE
+        </h6>
+        <button type="button" class="btn-close btn-close-white" style="opacity: 0.5;" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form th:action="@{/clientes/{id}/editar(id=${cliente.id})}" method="post">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Nome Completo *</label>
+              <input type="text" name="nome" class="form-control" required th:value="${cliente.nome}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">CPF / CNPJ</label>
+              <input type="text" name="cpfCnpj" class="form-control" th:value="${cliente.cpfCnpj}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Celular</label>
+              <input type="text" name="celular" class="form-control" th:value="${cliente.celular}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-5 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">E-mail</label>
+              <input type="email" name="email" class="form-control" th:value="${cliente.email}">
+            </div>
+            <div class="col-md-7 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Endereço Completo</label>
+              <input type="text" name="endereco" class="form-control" th:value="${cliente.endereco}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Bairro</label>
+              <input type="text" name="bairro" class="form-control" th:value="${cliente.bairro}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Cidade - UF</label>
+              <input type="text" name="cidade" class="form-control" th:value="${cliente.cidade}">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top" style="border-color: var(--border-subtle) !important;">
+            <button type="button" class="btn-outline-custom" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn-primary-custom" style="background: var(--col-aguardando); color: #000;">
+              <i data-lucide="save" width="18" height="18" class="me-1"></i> Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

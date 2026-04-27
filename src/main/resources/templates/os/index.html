@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('Gestão de O.S. - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+    <div class="page-header mb-4">
+        <div>
+            <span class="page-eyebrow">// base de dados e pesquisa</span>
+            <h1 class="page-title">ORDENS DE SERVIÇO</h1>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <div class="position-relative">
+                <i data-lucide="search" class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+                <input type="search" name="termo" class="form-control" placeholder="Buscar Placa ou Cliente..." style="padding-left: 36px; width: 300px;"
+                       th:value="${termo}" hx-get="/os/lista" hx-trigger="keyup changed delay:500ms, search" hx-target="#container-tabela">
+            </div>
+            <a href="/os/nova" class="btn-primary-custom text-nowrap">
+                <i data-lucide="plus" width="18" height="18"></i> Nova O.S.
+            </a>
+        </div>
+    </div>
+
+    <div id="form-container" class="mb-4"></div>
+
+    <div class="glass-card overflow-hidden">
+        <div class="card-body p-0" id="container-tabela" th:fragment="tabelaOS">
+            <div class="table-responsive">
+                <table class="table-dark-custom">
+                    <thead style="background: rgba(0,0,0,0.2);">
+                    <tr>
+                        <th class="ps-4">Nº O.S.</th>
+                        <th>Cliente</th>
+                        <th>Veículo / Equip.</th>
+                        <th>Emissão</th>
+                        <th>Situação</th>
+                        <th class="text-end pe-4">Ação</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="os : ${ordensPage.content}">
+                        <td class="ps-4"><a th:href="@{/os/{id}(id=${os.id})}" style="font-family: var(--font-mono); font-weight: 600; color: var(--col-aberta); text-decoration: none; font-size: 15px;" th:text="'#' + ${os.numeroOs}">001</a></td>
+                        <td>
+                            <strong style="color: var(--text-primary); font-size: 15px;" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></strong><br>
+                            <span style="color: var(--text-muted); font-size: 12px; font-family: var(--font-mono);" th:text="${os.cliente != null ? os.cliente.celular : ''}"></span>
+                        </td>
+                        <td>
+                            <span style="color: var(--text-secondary);" th:text="${os.veiculo.modelo}"></span><br>
+                            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);" th:text="${os.veiculo.placaChassi}"></span>
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 13px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span class="badge-custom"
+                                  th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
+                                            (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: var(--col-aguardando-bg); border-color: var(--col-aguardando)' :
+                                            (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)' :
+                                            'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))}"
+                                  th:text="${os.situacao}">
+                            </span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <a th:href="@{/os/{id}(id=${os.id})}" class="btn-outline-custom" style="padding: 6px 10px;">
+                                <i data-lucide="external-link" width="16" height="16"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${ordensPage.empty}">
+                        <td colspan="6" class="text-center py-5" style="color: var(--text-muted);">
+                            <i data-lucide="inbox" width="48" height="48" class="mb-3 opacity-50"></i><br>
+                            Nenhuma Ordem de Serviço encontrada.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-3 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-mid) !important;" th:if="${ordensPage.totalPages > 1}">
+                <span style="color: var(--text-muted); font-size: 13px;">
+                    Mostrando página <strong style="color: var(--text-primary);" th:text="${ordensPage.number + 1}">1</strong> de <strong style="color: var(--text-primary);" th:text="${ordensPage.totalPages}">5</strong>
+                </span>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-custom" style="border-radius: 6px 0 0 6px;"
+                            th:disabled="${ordensPage.first}"
+                            th:attr="hx-get=@{/os/lista(termo=${termo}, page=${ordensPage.number - 1})}"
+                            hx-target="#container-tabela">Anterior</button>
+                    <button class="btn btn-sm btn-outline-custom" style="border-radius: 0 6px 6px 0; border-left: none;"
+                            th:disabled="${ordensPage.last}"
+                            th:attr="hx-get=@{/os/lista(termo=${termo}, page=${ordensPage.number + 1})}"
+                            hx-target="#container-tabela">Próxima</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

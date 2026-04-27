@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Impressão - O.S. ' + ${os.numeroOs}">O.S. Impressão</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-size: 14px; color: #000; background-color: #fff; }
+        .box-title { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 5px 10px; font-weight: bold; }
+        .table-print th { background-color: #f8f9fa !important; border-bottom: 2px solid #000; }
+        .table-print td, .table-print th { padding: 0.3rem; border: 1px solid #dee2e6; }
+
+        /* Tudo o que tiver a classe 'no-print' desaparece na hora de imprimir na folha A4 */
+        @media print {
+            .no-print { display: none !important; }
+            body { margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body class="p-4">
+
+<div class="text-end mb-4 no-print">
+    <button onclick="window.print()" class="btn btn-primary btn-lg px-5">🖨️ Imprimir O.S.</button>
+    <button onclick="window.close()" class="btn btn-secondary btn-lg">Fechar</button>
+</div>
+
+<div class="row border-bottom border-dark pb-3 mb-4 align-items-center">
+    <div class="col-3 text-center">
+        <img th:src="@{/img/logo.png}" alt="Logo" style="max-height: 140px; max-width: 100%;">
+    </div>
+    <div class="col-6 text-center">
+        <h3 class="fw-bold mb-1" style="font-size: 1.3rem;">CAMBIOMATIC REPAROS AUTOMOTIVOS</h3>
+        <p class="mb-0 small">Avenida Falsa, 123 - Centro</p>
+        <p class="mb-0 small">São Paulo - SP | CEP: 01000-000</p>
+        <p class="mb-0 small fw-bold">Telefone: (11) 99999-9999</p>
+        <p class="mb-0 small">CNPJ: 99.999.999/0001-99 | Insc. Estadual: 999.999.999.999</p>
+    </div>
+    <div class="col-3 text-end">
+        <div class="border border-2 border-dark p-2 text-center">
+            <h5 class="mb-0">ORDEM DE SERVIÇO</h5>
+            <h3 class="fw-bold text-danger mb-0" th:text="'Nº ' + ${os.numeroOs}">Nº 00000</h3>
+            <span class="small" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy HH:mm')}">01/01/2026</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-7">
+        <div class="box-title">DADOS DO CLIENTE</div>
+        <div class="border p-2" style="min-height: 80px;">
+            <strong>Nome:</strong> <span th:text="${os.cliente.nome}"></span><br>
+            <strong>CPF/CNPJ:</strong> <span th:text="${os.cliente.cpfCnpj != null ? os.cliente.cpfCnpj : 'N/I'}"></span> |
+            <strong>Celular:</strong> <span th:text="${os.cliente.celular != null ? os.cliente.celular : 'N/I'}"></span><br>
+            <strong>Endereço:</strong> <span th:text="${os.cliente.endereco != null ? os.cliente.endereco : 'N/I'}"></span>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="box-title">DADOS DO VEÍCULO</div>
+        <div class="border p-2" style="min-height: 80px;">
+            <strong>Modelo:</strong> <span th:text="${os.veiculo.modelo}"></span><br>
+            <strong>Placa/Chassi:</strong> <span th:text="${os.veiculo.placaChassi}"></span><br>
+            <strong>Ano:</strong> <span th:text="${os.veiculo.ano != null ? os.veiculo.ano : '-'}"></span>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <strong>Problema Relatado / Observações:</strong>
+    <div class="border p-2 fst-italic mt-1" th:text="${os.problemaReclamado != null && !os.problemaReclamado.isBlank() ? os.problemaReclamado : 'Nenhuma observação registrada.'}"></div>
+</div>
+
+<div class="box-title mt-2">CHECKLIST TÉCNICO DE AR CONDICIONADO</div>
+<div class="border p-2 mb-4">
+    <div class="row text-center">
+        <div class="col-3">
+            <span class="small fw-bold">Pressão do Gás:</span><br>
+            <span th:text="${os.checkPressaoGas != null && !os.checkPressaoGas.isEmpty() ? os.checkPressaoGas : 'Não Avaliado'}"></span>
+        </div>
+        <div class="col-3 border-start border-dark">
+            <span class="small fw-bold">Filtro de Cabine:</span><br>
+            <span th:text="${os.checkFiltroCabine != null && !os.checkFiltroCabine.isEmpty() ? os.checkFiltroCabine : 'Não Avaliado'}"></span>
+        </div>
+        <div class="col-3 border-start border-dark">
+            <span class="small fw-bold">Compressor:</span><br>
+            <span th:text="${os.checkCompressor != null && !os.checkCompressor.isEmpty() ? os.checkCompressor : 'Não Avaliado'}"></span>
+        </div>
+        <div class="col-3 border-start border-dark">
+            <span class="small fw-bold">Higienização:</span><br>
+            <span th:text="${os.checkHigienizacao != null && !os.checkHigienizacao.isEmpty() ? os.checkHigienizacao : 'Não Avaliado'}"></span>
+        </div>
+    </div>
+</div>
+
+<div class="box-title">DESCRIÇÃO DOS SERVIÇOS E PEÇAS</div>
+<table class="table table-print w-100 mb-4">
+    <thead>
+    <tr>
+        <th style="width: 5%;">Qtd</th>
+        <th style="width: 60%;">Descrição (Serviço / Peça)</th>
+        <th class="text-end" style="width: 15%;">V. Unitário (R$)</th>
+        <th class="text-end" style="width: 20%;">V. Total (R$)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="serv : ${os.servicos}">
+        <td class="text-center" th:text="${serv.quantidade}">1</td>
+        <td><span class="badge bg-secondary me-1">SRV</span> <span th:text="${serv.descricao}"></span></td>
+        <td class="text-end" th:text="${#numbers.formatDecimal(serv.valorUnitario, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+        <td class="text-end" th:text="${#numbers.formatDecimal(serv.valorTotal, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+    </tr>
+    <tr th:each="peca : ${os.pecas}">
+        <td class="text-center" th:text="${peca.quantidade}">1</td>
+        <td><span class="badge bg-dark me-1">PÇA</span> <span th:text="${peca.descricao}"></span></td>
+        <td class="text-end" th:text="${#numbers.formatDecimal(peca.valorUnitario, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+        <td class="text-end" th:text="${#numbers.formatDecimal(peca.valorTotal, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="row mb-5 justify-content-end">
+    <div class="col-5">
+        <table class="table table-bordered table-sm">
+            <tbody>
+            <tr>
+                <td>Subtotal Serviços:</td>
+                <td class="text-end">R$ <span th:text="${os.totalServicos != null ? #numbers.formatDecimal(os.totalServicos, 1, 'POINT', 2, 'COMMA') : '0,00'}"></span></td>
+            </tr>
+            <tr>
+                <td>Subtotal Peças:</td>
+                <td class="text-end">R$ <span th:text="${os.totalPecas != null ? #numbers.formatDecimal(os.totalPecas, 1, 'POINT', 2, 'COMMA') : '0,00'}"></span></td>
+            </tr>
+            <tr>
+                <td>Desconto / Outros:</td>
+                <td class="text-end">R$ <span th:text="${os.frete != null ? #numbers.formatDecimal(os.frete, 1, 'POINT', 2, 'COMMA') : '0,00'}"></span></td>
+            </tr>
+            <tr class="table-dark">
+                <td class="fw-bold">TOTAL A PAGAR:</td>
+                <td class="text-end fw-bold fs-5">R$ <span th:text="${os.valorTotal != null ? #numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA') : '0,00'}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="border border-dark p-3 mb-4" th:if="${os.situacao == 'Encerrada'}">
+    <h6 class="fw-bold mb-2">TERMO DE GARANTIA</h6>
+    <p class="small mb-0 text-justify">
+        A <strong>Cambiomatic</strong> garante os serviços prestados e as peças substituídas descritas nesta Ordem de Serviço por um período de <strong>90 dias</strong>, conforme estabelece o Art. 26 do Código de Defesa do Consumidor.
+        A presente garantia tem validade até o dia <strong class="fs-6 text-decoration-underline" th:text="${#temporals.format(os.dataGarantia, 'dd/MM/yyyy')}"></strong>.
+        A garantia cobre exclusivamente defeitos de fabricação das peças instaladas e falhas na execução do serviço. Danos causados por mau uso, agentes externos ou manutenção por terceiros anulam automaticamente esta garantia.
+    </p>
+</div>
+
+<div class="row text-center mt-5 pt-5">
+    <div class="col-6">
+        <hr style="border-top: 1px solid #000; width: 80%; margin: 0 auto;">
+        <p class="mt-2 fw-bold">CAMBIOMATIC REPAROS AUTOMOTIVOS</p>
+    </div>
+    <div class="col-6">
+        <hr style="border-top: 1px solid #000; width: 80%; margin: 0 auto;">
+        <p class="mt-2 fw-bold" th:text="'Assinatura do Cliente: ' + ${os.cliente.nome}"></p>
+        <p class="small text-muted">Reconheço e aprovo a execução dos serviços acima descritos.</p>
+    </div>
+</div>
+
+<div class="text-center mt-4 small text-muted">
+    Documento gerado pelo ERP Cambiomatic em <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+</div>
+
+</body>
+</html>

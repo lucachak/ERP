@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('CRM de Clientes - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+    <div class="page-header mb-4">
+        <div>
+            <span class="page-eyebrow">// base de relacionamento</span>
+            <h1 class="page-title">GESTÃO DE CLIENTES (CRM)</h1>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="position-relative">
+                <i data-lucide="search" class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+                <input type="search" name="termo" class="form-control" placeholder="Buscar Nome ou Documento..." style="padding-left: 36px; width: 300px;"
+                       th:value="${termo}" hx-get="/clientes/lista" hx-trigger="keyup changed delay:500ms, search" hx-target="#container-tabela">
+            </div>
+            <button class="btn-primary-custom text-nowrap" hx-get="/clientes/novo" hx-target="#form-container">
+                <i data-lucide="user-plus" width="18" height="18"></i> Novo Cliente
+            </button>
+        </div>
+    </div>
+
+    <div id="form-container" class="mb-4"></div>
+
+    <div class="glass-card overflow-hidden">
+        <div class="card-body p-0" id="container-tabela" th:fragment="tabelaClientes">
+            <div class="table-responsive">
+                <table class="table-dark-custom">
+                    <thead style="background: rgba(0,0,0,0.2);">
+                    <tr>
+                        <th class="ps-4">Nome do Cliente</th>
+                        <th>Contato (Celular/Email)</th>
+                        <th>Documento</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cliente : ${clientesPage.content}">
+                        <td class="ps-4 fw-bold" style="color: var(--col-aberta); font-size: 15px;" th:text="${cliente.nome}"></td>
+                        <td>
+                            <div style="color: var(--text-primary); font-family: var(--font-mono); font-size: 13px;" th:text="${cliente.celular}"></div>
+                            <div style="color: var(--text-muted); font-size: 12px;" th:text="${cliente.email != null && !cliente.email.isBlank() ? cliente.email : 'Sem e-mail'}"></div>
+                        </td>
+                        <td style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 13px;" th:text="${cliente.cpfCnpj != null && !cliente.cpfCnpj.isBlank() ? cliente.cpfCnpj : 'Não Informado'}"></td>
+                        <td class="text-end pe-4">
+                            <a th:href="@{/clientes/{id}(id=${cliente.id})}" class="btn-outline-custom">
+                                <i data-lucide="user-search" width="16" height="16"></i> Ficha
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${clientesPage.empty}">
+                        <td colspan="4" class="text-center py-5" style="color: var(--text-muted);">
+                            <i data-lucide="users" width="48" height="48" class="mb-3 opacity-50"></i><br>
+                            Nenhum cliente encontrado.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-3 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-mid) !important;" th:if="${clientesPage.totalPages > 1}">
+                <span style="color: var(--text-muted); font-size: 13px;">
+                    Mostrando página <strong style="color: var(--text-primary);" th:text="${clientesPage.number + 1}">1</strong> de <strong style="color: var(--text-primary);" th:text="${clientesPage.totalPages}">5</strong>
+                </span>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-custom" style="border-radius: 6px 0 0 6px;"
+                            th:disabled="${clientesPage.first}" th:attr="hx-get=@{/clientes/lista(termo=${termo}, page=${clientesPage.number - 1})}" hx-target="#container-tabela">Anterior</button>
+                    <button class="btn btn-sm btn-outline-custom" style="border-radius: 0 6px 6px 0; border-left: none;"
+                            th:disabled="${clientesPage.last}" th:attr="hx-get=@{/clientes/lista(termo=${termo}, page=${clientesPage.number + 1})}" hx-target="#container-tabela">Próxima</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

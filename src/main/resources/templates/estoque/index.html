@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('Estoque de Peças - Cambiomatic')}"></head>
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+  <div class="page-header mb-4">
+    <div>
+      <span class="page-eyebrow">// almoxarifado</span>
+      <h1 class="page-title">ESTOQUE DE PEÇAS</h1>
+    </div>
+    <button class="btn-primary-custom" style="background: var(--col-aguardando);" hx-get="/estoque/nova" hx-target="#form-container">
+      <i data-lucide="package-plus" width="18" height="18"></i> Nova Peça
+    </button>
+  </div>
+
+  <div id="form-container" class="mb-4"></div>
+
+  <div class="glass-card">
+    <div class="card-body p-0" id="container-tabela" th:fragment="tabelaEstoque">
+      <div class="table-responsive">
+        <table class="table-dark-custom">
+          <thead style="background: rgba(0,0,0,0.2);">
+          <tr>
+            <th class="ps-4">Cód.</th>
+            <th>Descrição da Peça</th>
+            <th class="text-center">Qtd. Estoque</th>
+            <th class="text-end">Custo R$</th>
+            <th class="text-end pe-4">Venda R$</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="peca : ${pecas}">
+            <td class="ps-4" style="color: var(--text-secondary); font-family: var(--font-mono);" th:text="${peca.codigo != null && !peca.codigo.isBlank() ? peca.codigo : '-'}">001</td>
+            <td class="fw-bold" style="color: var(--col-aguardando);" th:text="${peca.descricao}">FILTRO</td>
+
+            <td class="text-center">
+              <span th:if="${peca.quantidadeEstoque > 2}" class="px-3 py-1 rounded" style="background: rgba(255,255,255,0.05); font-family: var(--font-mono);" th:text="${peca.quantidadeEstoque}">10</span>
+              <span th:if="${peca.quantidadeEstoque <= 2}" class="px-3 py-1 rounded fw-bold" style="background: var(--col-danger-bg); color: var(--col-danger); font-family: var(--font-mono);" th:text="${peca.quantidadeEstoque}">2</span>
+            </td>
+
+            <td class="text-end" style="color: var(--text-muted); font-family: var(--font-mono);" th:text="${peca.precoCusto != null ? #numbers.formatDecimal(peca.precoCusto, 1, 'POINT', 2, 'COMMA') : '-'}">10,00</td>
+            <td class="text-end pe-4 fw-bold" style="color: var(--text-primary); font-family: var(--font-mono);" th:text="${#numbers.formatDecimal(peca.precoVenda, 1, 'POINT', 2, 'COMMA')}">20,00</td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(pecas)}">
+            <td colspan="5" class="text-center text-muted py-5">
+              <i data-lucide="package-x" width="48" height="48" class="mb-3 opacity-50"></i><br>
+              Nenhuma peça cadastrada no estoque.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

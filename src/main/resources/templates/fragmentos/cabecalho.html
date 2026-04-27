@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<body>
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title}">L.</title>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<div th:fragment="navbar">
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <div class="navbar-elite d-flex justify-content-between align-items-center p-3 mb-4 shadow-sm">
+        <div class="d-flex align-items-center gap-4">
+            <a href="/os" class="brand-logo">
+                <i data-lucide="wind" width="24" height="24"></i> L.
+            </a>
+
+            <nav class="nav d-none d-lg-flex gap-2">
+                <a class="nav-link-elite" href="/estoque"><i data-lucide="package" width="16" height="16"></i> Estoque</a>
+                <a class="nav-link-elite" href="/os"><i data-lucide="file-cog" width="16" height="16"></i> Serviços</a>
+                <a class="nav-link-elite" href="/clientes"><i data-lucide="users" width="16" height="16"></i> Clientes</a>
+            </nav>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button id="btn-theme-toggle" class="btn-nav-action" title="Mudar Tema">
+                <span id="icon-sun" style="display: none;"><i data-lucide="sun" width="16" height="16"></i></span>
+                <span id="icon-moon" style="display: none;"><i data-lucide="moon" width="16" height="16"></i></span>
+            </button>
+
+            <!-- Backup button hidden in light version -->
+            <a sec:authorize="hasRole('ADMIN')" href="/backup/download" class="btn-nav-action" title="Backup Base de Dados" style="display:none;">
+                <i data-lucide="database-backup" width="16" height="16"></i>
+            </a>
+            <div class="btn-nav-action" style="cursor: default; border: none;">
+                <i data-lucide="circle-user-round" width="16" height="16" style="color: var(--text-secondary);"></i>
+                <span sec:authentication="name" style="text-transform: capitalize;">User</span>
+            </div>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn-nav-action" style="color: var(--text-secondary);" title="Sair">
+                    <i data-lucide="log-out" width="16" height="16"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Lógica do Menu Ativo
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link-elite');
+            let bestMatch = null; let longestMatch = 0;
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
+                    if (href.length > longestMatch) { bestMatch = link; longestMatch = href.length; }
+                }
+            });
+            if (bestMatch) bestMatch.classList.add('active-menu');
+
+            // Lógica do Tema Claro/Escuro
+            const themeToggleBtn = document.getElementById('btn-theme-toggle');
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
+            const htmlEl = document.documentElement;
+
+            function updateThemeIcon(theme) {
+                if (theme === 'light') {
+                    iconSun.style.display = 'none'; // No modo claro, mostra a lua (para voltar pro escuro)
+                    iconMoon.style.display = 'block';
+                } else {
+                    iconSun.style.display = 'block'; // No modo escuro, mostra o sol
+                    iconMoon.style.display = 'none';
+                }
+            }
+
+            // Inicia o ícone de acordo com o que o <head> carregou
+            updateThemeIcon(htmlEl.getAttribute('data-theme'));
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = htmlEl.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                htmlEl.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+
+        document.body.addEventListener('htmx:afterSwap', function() { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+    </script>
+</div>
+</body>
+</html>

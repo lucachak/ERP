@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('Dashboard - Cambiomatic')}"></head>
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+  <div class="page-header mb-4">
+    <div>
+      <span class="page-eyebrow">// painel executivo</span>
+      <h1 class="page-title">DASHBOARD</h1>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-md-3 mb-3">
+      <div class="stat-chip">
+        <div class="stat-icon-box" style="background: var(--col-encerrada-bg); color: var(--col-encerrada);">
+          <i data-lucide="banknote" width="24" height="24"></i>
+        </div>
+        <div>
+          <div class="stat-label">Faturamento (Mês)</div>
+          <div class="stat-value">R$ <span th:text="${#numbers.formatDecimal(faturamentoMensal, 1, 'POINT', 2, 'COMMA')}">0,00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="stat-chip">
+        <div class="stat-icon-box" style="background: var(--col-aberta-bg); color: var(--col-aberta);">
+          <i data-lucide="wrench" width="24" height="24"></i>
+        </div>
+        <div>
+          <div class="stat-label">O.S. em Andamento</div>
+          <div class="stat-value" th:text="${osAbertas}">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="stat-chip">
+        <div class="stat-icon-box" style="background: var(--col-danger-bg); color: var(--col-danger);">
+          <i data-lucide="triangle-alert" width="24" height="24"></i>
+        </div>
+        <div>
+          <div class="stat-label">Peças Baixas</div>
+          <div class="stat-value" style="color: var(--col-danger);" th:text="${alertasEstoque}">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="stat-chip">
+        <div class="stat-icon-box" style="background: var(--col-servico-bg); color: var(--col-servico);">
+          <i data-lucide="timer" width="24" height="24"></i>
+        </div>
+        <div>
+          <div class="stat-label">Tempo Médio</div>
+          <div class="stat-value"><span th:text="${tempoMedioHoras}">0</span> H</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-md-8 mb-3">
+      <div class="glass-card h-100">
+        <div class="glass-header text-primary" style="color: var(--col-aberta) !important;">
+          <i data-lucide="bar-chart-2" width="20" height="20" class="me-2"></i> Faturamento (Últimos 6 Meses)
+        </div>
+        <div class="card-body p-4">
+          <canvas id="graficoFaturamento" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="glass-card h-100">
+        <div class="glass-header" style="color: var(--col-servico) !important;">
+          <i data-lucide="pie-chart" width="20" height="20" class="me-2"></i> Status das O.S.
+        </div>
+        <div class="card-body p-4 d-flex justify-content-center">
+          <canvas id="graficoStatus" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="glass-card">
+        <div class="glass-header d-flex justify-content-between align-items-center">
+          <div style="color: var(--text-primary);"><i data-lucide="clock" width="20" height="20" class="me-2" style="color: var(--col-aguardando);"></i> Últimas Ordens de Serviço</div>
+          <a href="/os" class="btn-outline-custom">Ver Todas <i data-lucide="arrow-right" width="14" height="14"></i></a>
+        </div>
+        <div class="table-responsive">
+          <table class="table-dark-custom">
+            <thead style="background: rgba(0,0,0,0.2);">
+            <tr>
+              <th class="ps-4">Nº O.S.</th>
+              <th>Cliente</th>
+              <th>Veículo / Equip.</th>
+              <th>Data de Entrada</th>
+              <th>Situação</th>
+              <th class="text-end pe-4">Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="os : ${ultimasOs}" style="cursor: pointer;" th:onclick="'window.location.href=\'/os/' + ${os.id} + '\''">
+              <td class="ps-4"><a th:href="@{/os/{id}(id=${os.id})}" class="os-number" th:text="'#' + ${os.numeroOs}">001</a></td>
+              <td>
+                <strong style="color: var(--text-primary); font-size: 14px;" th:text="${os.cliente.nome}">CLIENTE FINAL</strong>
+              </td>
+              <td>
+                <span style="color: var(--text-secondary);" th:text="${os.veiculo.modelo}"></span><br>
+                <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);" th:text="${os.veiculo.placaChassi}"></span>
+              </td>
+              <td style="color: var(--text-secondary); font-size: 13px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy HH:mm')}"></td>
+              <td>
+                                <span class="badge-custom"
+                                      th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
+                                                (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: var(--col-aguardando-bg); border-color: var(--col-aguardando)' :
+                                                (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)' :
+                                                'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))}"
+                                      th:text="${os.situacao}">Aberta
+                                </span>
+              </td>
+              <td class="text-end pe-4" style="font-family: var(--font-mono); font-weight: 600; color: var(--text-primary);">
+                R$ <span th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}">0,00</span>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(ultimasOs)}">
+              <td colspan="6" class="text-center py-5" style="color: var(--text-muted);">
+                <i data-lucide="inbox" width="48" height="48" class="mb-3 opacity-50"></i><br>
+                Nenhuma O.S. cadastrada recentemente.
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+  const labelsMeses = /*[[${chartMeses}]]*/ [];
+  const dadosFaturamento = /*[[${chartFaturamentos}]]*/ [];
+
+  const fontStyle = { family: "'DM Sans', sans-serif", size: 12, color: '#8b91a8' };
+  const gridStyle = { color: 'rgba(255,255,255,0.06)' };
+
+  const ctxFaturamento = document.getElementById('graficoFaturamento').getContext('2d');
+  new Chart(ctxFaturamento, {
+    type: 'bar',
+    data: {
+      labels: labelsMeses,
+      datasets: [{
+        label: 'Faturamento R$', data: dadosFaturamento,
+        backgroundColor: '#3b82f6', borderRadius: 4, barThickness: 24
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { bodyFont: fontStyle, titleFont: fontStyle } },
+      scales: {
+        y: { beginAtZero: true, grid: gridStyle, border: {display: false}, ticks: { font: fontStyle, color: '#8b91a8' } },
+        x: { grid: { display: false }, border: {display: false}, ticks: { font: fontStyle, color: '#8b91a8' } }
+      }
+    }
+  });
+
+  const qtdAberta = /*[[${qtdAberta}]]*/ 0;
+  const qtdAguardando = /*[[${qtdAguardando}]]*/ 0;
+  const qtdServico = /*[[${qtdServico}]]*/ 0;
+  const qtdEncerrada = /*[[${qtdEncerrada}]]*/ 0;
+
+  const ctxStatus = document.getElementById('graficoStatus').getContext('2d');
+  new Chart(ctxStatus, {
+    type: 'doughnut',
+    data: {
+      labels: ['Aberta', 'Aguardando Peça', 'Em Serviço', 'Encerrada'],
+      datasets: [{
+        data: [qtdAberta, qtdAguardando, qtdServico, qtdEncerrada],
+        backgroundColor: ['#3b82f6', '#f59e0b', '#06b6d4', '#22c55e'],
+        borderWidth: 0, hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '75%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#8b91a8', padding: 20, font: fontStyle, usePointStyle: true } },
+        tooltip: { bodyFont: fontStyle }
+      }
+    }
+  });
+</script>
+</body>
+</html>

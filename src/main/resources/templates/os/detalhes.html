@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragmentos/cabecalho :: head('Detalhes da O.S. - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div id="os-container" th:fragment="osCompleta" class="container mt-4 mb-5">
+
+    <div class="page-header border-bottom" style="border-color: var(--border-subtle) !important; padding-bottom: 24px; margin-bottom: 32px;">
+        <div>
+            <h1 class="page-title">ORDEM DE SERVIÇO <span style="color: var(--col-aberta); font-family: var(--font-mono);" th:text="'#' + ${os.numeroOs}"></span></h1>
+        </div>
+        <div class="d-flex gap-2">
+            <button th:if="${os.situacao == 'Encerrada' and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                    class="btn-primary-custom" style="background: var(--col-encerrada);"
+                    th:onclick="enviarWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]], [[${os.veiculo.modelo}]], [[${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}]] )">
+                <i data-lucide="message-circle" width="18" height="18"></i> Avisar Cliente
+            </button>
+
+            <a th:href="@{/os/{id}/imprimir(id=${os.id})}" target="_blank" class="btn-outline-custom" style="color: var(--col-aberta); border-color: rgba(59,130,246,0.3);">
+                <i data-lucide="printer" width="18" height="18"></i> Imprimir
+            </a>
+            <a href="/os" class="btn-outline-custom">Voltar</a>
+        </div>
+    </div>
+
+    <div class="glass-card mb-4 p-4 d-flex justify-content-between flex-wrap gap-3">
+        <div>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Cliente / Celular</span>
+            <div style="font-size: 16px; font-weight: 600;" th:text="${os.cliente.nome}"></div>
+            <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 13px;" th:text="${os.cliente.celular}"></div>
+        </div>
+        <div class="border-start ps-4" style="border-color: var(--border-mid) !important;">
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Veículo / Placa</span>
+            <div style="font-size: 16px; font-weight: 600;" th:text="${os.veiculo.modelo}"></div>
+            <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 13px;" th:text="${os.veiculo.placaChassi}"></div>
+        </div>
+        <div class="border-start ps-4" style="border-color: var(--border-mid) !important; flex: 1;">
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Problema Relatado</span>
+            <div style="font-size: 14px; color: var(--text-primary);" th:text="${os.problemaReclamado}"></div>
+        </div>
+        <div class="text-end border-start ps-4" style="border-color: var(--border-mid) !important;">
+            <div style="color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;">
+                Emissão: <span style="font-family: var(--font-mono); color: var(--text-primary);" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div th:if="${os.dataEntrega != null}" style="color: var(--col-encerrada); font-size: 12px; margin-bottom: 8px; font-weight: 600;">
+                Entregue: <span style="font-family: var(--font-mono);" th:text="${#temporals.format(os.dataEntrega, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div th:if="${os.dataGarantia != null}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; background: rgba(59,130,246,0.15); color: var(--col-aberta); font-size: 11px; font-weight: 600; font-family: var(--font-mono);">
+                <i data-lucide="shield-check" width="14" height="14"></i> GARANTIA ATÉ: <span th:text="${#temporals.format(os.dataGarantia, 'dd/MM/yyyy')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4" th:if="${os.situacao == 'Aberta'}">
+
+            <div class="glass-card mb-4" style="border-top: 3px solid var(--col-aberta);">
+                <div class="glass-header" style="color: var(--col-aberta);"><i data-lucide="wrench" width="18" height="18" class="me-2"></i>Lançar Serviço</div>
+                <div class="card-body p-3">
+                    <form th:attr="hx-post=@{/os/{id}/servicos(id=${os.id})}" hx-target="#painel-dinamico" hx-swap="outerHTML">
+
+                        <div id="bloco-select-servicos" th:fragment="dropdownServicos" class="mb-3 pb-3 border-bottom" style="border-color: var(--border-subtle) !important;">
+                            <label class="form-label" style="font-size: 12px; color: var(--col-aberta);">Buscar Tabela de Preço</label>
+                            <div class="d-flex gap-2">
+                                <select name="servicoPadraoId" class="form-select form-select-sm" style="border-color: rgba(59,130,246,0.3) !important;">
+                                    <option value="">-- Serviço Avulso (Digitar) --</option>
+                                    <option th:each="s : ${servicosPadrao}" th:value="${s.id}" th:text="${s.descricao + ' | R$ ' + #numbers.formatDecimal(s.valorPadrao, 1, 'POINT', 2, 'COMMA')}"></option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-primary-custom px-2" data-bs-toggle="modal" data-bs-target="#modalNovoServico" title="Cadastrar Padrão">
+                                    <i data-lucide="plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Descrição (Se avulso)</label>
+                            <input type="text" name="descricao" class="form-control form-control-sm">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Qtd (Horas) *</label>
+                                <input type="number" step="0.1" name="quantidade" class="form-control form-control-sm" value="1.0" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Unit. (R$)</label>
+                                <input type="number" step="0.01" name="valorUnitario" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Técnico *</label>
+                            <input type="text" name="tecnico" class="form-control form-control-sm" required placeholder="LUIZ DANIEL">
+                        </div>
+                        <button type="submit" class="btn-primary-custom w-100 justify-content-center text-uppercase" style="font-size: 13px;">Adicionar Serviço</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border-top: 3px solid var(--col-aguardando);">
+                <div class="glass-header" style="color: var(--col-aguardando);"><i data-lucide="package" width="18" height="18" class="me-2"></i>Lançar Peça</div>
+                <div class="card-body p-3">
+                    <form th:attr="hx-post=@{/os/{id}/pecas(id=${os.id})}" hx-target="#painel-dinamico" hx-swap="outerHTML">
+
+                        <div id="bloco-select-pecas" th:fragment="dropdownPecas" class="mb-3 pb-3 border-bottom" style="border-color: var(--border-subtle) !important;">
+                            <label class="form-label" style="font-size: 12px; color: var(--col-aguardando);">Buscar no Estoque</label>
+                            <div class="d-flex gap-2">
+                                <select name="pecaEstoqueId" class="form-select form-select-sm" style="border-color: rgba(245,158,11,0.3) !important;">
+                                    <option value="">-- Peça Avulsa (Digitar) --</option>
+                                    <option th:each="p : ${pecasEstoque}" th:value="${p.id}" th:text="${p.descricao + ' (Est. ' + p.quantidadeEstoque + ' | R$ ' + #numbers.formatDecimal(p.precoVenda, 1, 'POINT', 2, 'COMMA') + ')'}"></option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-primary-custom px-2" style="background: var(--col-aguardando);" data-bs-toggle="modal" data-bs-target="#modalNovaPeca">
+                                    <i data-lucide="plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Cód.</label>
+                                <input type="text" name="codigoPeca" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-8 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Descrição (Se avulsa)</label>
+                                <input type="text" name="descricao" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Qtd *</label>
+                                <input type="number" step="0.1" name="quantidade" class="form-control form-control-sm" value="1.0" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Unit. (R$)</label>
+                                <input type="number" step="0.01" name="valorUnitario" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary-custom w-100 justify-content-center text-uppercase" style="background: var(--col-aguardando); font-size: 13px;">Adicionar Peça</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <div th:classappend="${os.situacao == 'Aberta' ? 'col-md-8' : 'col-md-12'}">
+            <div id="painel-dinamico" th:fragment="painelDinamico">
+
+                <div class="glass-card mb-4">
+                    <div class="glass-header" style="color: var(--text-primary);"><i data-lucide="list-checks" width="20" height="20" class="me-2" style="color: var(--col-aberta);"></i>Serviços Executados</div>
+                    <div class="table-responsive">
+                        <table class="table-dark-custom">
+                            <thead style="background: rgba(0,0,0,0.2);">
+                            <tr>
+                                <th>Serviço</th><th>Qtd/Unid</th><th>Unitário R$</th><th>Total R$</th><th>Técnico</th><th style="width: 50px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item : ${os.servicos}">
+                                <td th:text="${item.descricao}">CARGA</td>
+                                <td th:text="${item.quantidade + ' ' + item.unidade}">1.0 Hs</td>
+                                <td style="font-family: var(--font-mono);" th:text="${#numbers.formatDecimal(item.valorUnitario, 1, 'POINT', 2, 'COMMA')}">200,00</td>
+                                <td style="font-weight: 600; color: #fff; font-family: var(--font-mono);" th:text="${#numbers.formatDecimal(item.valorTotal, 1, 'POINT', 2, 'COMMA')}">200,00</td>
+                                <td th:text="${item.tecnico}">LUIZ</td>
+                                <td>
+                                    <button th:if="${os.situacao == 'Aberta'}" th:attr="hx-delete=@{/os/{id}/servicos/{servicoId}(id=${os.id}, servicoId=${item.id})}" hx-target="#painel-dinamico" hx-swap="outerHTML" class="btn btn-sm text-danger p-1" title="Remover"><i data-lucide="trash-2" width="16" height="16"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(os.servicos)}"><td colspan="6" class="text-center py-4" style="color: var(--text-muted);">Nenhum serviço lançado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card mb-4">
+                    <div class="glass-header" style="color: var(--text-primary);"><i data-lucide="layers" width="20" height="20" class="me-2" style="color: var(--col-aguardando);"></i>Peças Utilizadas</div>
+                    <div class="table-responsive">
+                        <table class="table-dark-custom">
+                            <thead style="background: rgba(0,0,0,0.2);">
+                            <tr>
+                                <th>Cód.</th><th>Descrição</th><th>Quant.</th><th>Unitário R$</th><th>Total R$</th><th style="width: 50px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="peca : ${os.pecas}">
+                                <td style="font-family: var(--font-mono); color: var(--text-secondary);" th:text="${peca.codigoPeca}">001</td>
+                                <td th:text="${peca.descricao}">FILTRO</td>
+                                <td style="font-family: var(--font-mono);" th:text="${peca.quantidade}">1.0</td>
+                                <td style="font-family: var(--font-mono);" th:text="${#numbers.formatDecimal(peca.valorUnitario, 1, 'POINT', 2, 'COMMA')}">50,00</td>
+                                <td style="font-weight: 600; color: #fff; font-family: var(--font-mono);" th:text="${#numbers.formatDecimal(peca.valorTotal, 1, 'POINT', 2, 'COMMA')}">50,00</td>
+                                <td>
+                                    <button th:if="${os.situacao == 'Aberta'}" th:attr="hx-delete=@{/os/{id}/pecas/{pecaId}(id=${os.id}, pecaId=${peca.id})}" hx-target="#painel-dinamico" hx-swap="outerHTML" class="btn btn-sm text-danger p-1" title="Remover"><i data-lucide="trash-2" width="16" height="16"></i></button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(os.pecas)}"><td colspan="6" class="text-center py-4" style="color: var(--text-muted);">Nenhuma peça lançada.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card mb-4 border-0" style="background: rgba(0,0,0,0.3);">
+                    <div class="card-body p-4">
+                        <div class="row text-end align-items-center">
+                            <div class="col-8" style="color: var(--text-secondary); font-size: 13px;">TOTAL SERVIÇOS R$:</div>
+                            <div class="col-4" style="font-family: var(--font-mono); font-size: 16px; color: #fff;" th:text="${#numbers.formatDecimal(os.totalServicos, 1, 'POINT', 2, 'COMMA')}">0,00</div>
+
+                            <div class="col-8 mt-2" style="color: var(--text-secondary); font-size: 13px;">TOTAL PEÇAS R$:</div>
+                            <div class="col-4 mt-2" style="font-family: var(--font-mono); font-size: 16px; color: #fff;" th:text="${#numbers.formatDecimal(os.totalPecas, 1, 'POINT', 2, 'COMMA')}">0,00</div>
+
+                            <div class="col-12 my-3"><hr style="border-color: var(--border-mid);"></div>
+
+                            <div class="col-8" style="color: var(--text-primary); font-family: var(--font-display); font-size: 24px; letter-spacing: 1px;">VALOR TOTAL R$:</div>
+                            <div class="col-4" style="font-family: var(--font-mono); font-size: 32px; font-weight: 600; color: var(--col-encerrada);" th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}">0,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card border-0" style="border-top: 3px solid var(--col-servico) !important;">
+                    <div class="glass-header" style="color: var(--col-servico);"><i data-lucide="clipboard-check" width="20" height="20" class="me-2"></i>Checklist Técnico e Extras</div>
+                    <div class="card-body p-4">
+                        <form th:if="${os.situacao == 'Aberta'}" th:attr="hx-post=@{/os/{id}/extras(id=${os.id})}" hx-target="#os-container" hx-swap="outerHTML">
+                            <div class="row mb-4 pb-4 border-bottom" style="border-color: var(--border-subtle) !important;">
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label" style="font-size: 12px; color: var(--col-servico);">Pressão Gás</label>
+                                    <select name="checkPressaoGas" class="form-select form-select-sm">
+                                        <option value="" th:selected="${os.checkPressaoGas == null || os.checkPressaoGas == ''}">Não Avaliado</option>
+                                        <option value="Normal" th:selected="${os.checkPressaoGas == 'Normal'}">Normal</option>
+                                        <option value="Baixa" th:selected="${os.checkPressaoGas == 'Baixa'}">Baixa</option>
+                                        <option value="Vazamento" th:selected="${os.checkPressaoGas == 'Vazamento'}">Vazamento</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label" style="font-size: 12px; color: var(--col-servico);">Filtro Cabine</label>
+                                    <select name="checkFiltroCabine" class="form-select form-select-sm">
+                                        <option value="" th:selected="${os.checkFiltroCabine == null || os.checkFiltroCabine == ''}">Não Avaliado</option>
+                                        <option value="Bom" th:selected="${os.checkFiltroCabine == 'Bom'}">Bom</option>
+                                        <option value="Sujo" th:selected="${os.checkFiltroCabine == 'Sujo'}">Sujo</option>
+                                        <option value="Ausente" th:selected="${os.checkFiltroCabine == 'Ausente'}">Ausente</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label" style="font-size: 12px; color: var(--col-servico);">Compressor</label>
+                                    <select name="checkCompressor" class="form-select form-select-sm">
+                                        <option value="" th:selected="${os.checkCompressor == null || os.checkCompressor == ''}">Não Avaliado</option>
+                                        <option value="Armando" th:selected="${os.checkCompressor == 'Armando'}">Armando</option>
+                                        <option value="Não Arma" th:selected="${os.checkCompressor == 'Não Arma'}">Não Arma</option>
+                                        <option value="Barulho" th:selected="${os.checkCompressor == 'Barulho'}">Barulho</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label" style="font-size: 12px; color: var(--col-servico);">Higienização</label>
+                                    <select name="checkHigienizacao" class="form-select form-select-sm">
+                                        <option value="" th:selected="${os.checkHigienizacao == null || os.checkHigienizacao == ''}">Não Avaliado</option>
+                                        <option value="Feita" th:selected="${os.checkHigienizacao == 'Feita'}">Feita</option>
+                                        <option value="Necessita" th:selected="${os.checkHigienizacao == 'Necessita'}">Necessita</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9 mb-3">
+                                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Observações Internas / Cliente</label>
+                                    <textarea name="observacoes" class="form-control" rows="2" th:text="${os.observacoes}"></textarea>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Valor Frete (R$)</label>
+                                    <input type="number" step="0.01" name="frete" class="form-control" style="font-family: var(--font-mono);" th:value="${os.frete}">
+                                </div>
+                            </div>
+                            <div class="text-end mt-2">
+                                <button type="submit" class="btn-primary-custom" style="background: var(--col-servico); color: #fff;"><i data-lucide="save" width="16" height="16"></i> Salvar Diagnóstico</button>
+                            </div>
+                        </form>
+
+                        <div th:if="${os.situacao == 'Encerrada'}">
+                            <div class="row mb-4 text-center rounded p-3" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle);">
+                                <div class="col-3 border-end" style="border-color: var(--border-subtle) !important;">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Gás</span>
+                                    <strong style="color: var(--col-servico);" th:text="${os.checkPressaoGas != null && !os.checkPressaoGas.isEmpty() ? os.checkPressaoGas : '-'}"></strong>
+                                </div>
+                                <div class="col-3 border-end" style="border-color: var(--border-subtle) !important;">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Filtro</span>
+                                    <strong style="color: var(--col-servico);" th:text="${os.checkFiltroCabine != null && !os.checkFiltroCabine.isEmpty() ? os.checkFiltroCabine : '-'}"></strong>
+                                </div>
+                                <div class="col-3 border-end" style="border-color: var(--border-subtle) !important;">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Compressor</span>
+                                    <strong style="color: var(--col-servico);" th:text="${os.checkCompressor != null && !os.checkCompressor.isEmpty() ? os.checkCompressor : '-'}"></strong>
+                                </div>
+                                <div class="col-3">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Higienização</span>
+                                    <strong style="color: var(--col-servico);" th:text="${os.checkHigienizacao != null && !os.checkHigienizacao.isEmpty() ? os.checkHigienizacao : '-'}"></strong>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between px-2">
+                                <div><strong class="text-white">Obs:</strong> <span style="color: var(--text-secondary);" th:text="${os.observacoes != null && !os.observacoes.isEmpty() ? os.observacoes : 'Nenhuma observação.'}"></span></div>
+                                <div><strong class="text-white">Frete R$:</strong> <span style="font-family: var(--font-mono); color: var(--text-secondary);" th:text="${#numbers.formatDecimal(os.frete, 1, 'POINT', 2, 'COMMA')}">0,00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNovaPeca" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0" style="border-top: 3px solid var(--col-aguardando) !important;">
+            <div class="modal-header py-3">
+                <h6 class="modal-title" style="font-family: var(--font-display); letter-spacing: 1px; color: var(--text-primary);">CADASTRO RÁPIDO DE PEÇA</h6>
+                <button type="button" class="btn-close btn-close-white" style="opacity: 0.5;" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form hx-post="/estoque/rapido" hx-target="#bloco-select-pecas" hx-swap="outerHTML" hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovaPeca')).hide(); this.reset(); lucide.createIcons(); }">
+                    <div class="mb-3"><label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Descrição *</label><input type="text" name="descricao" class="form-control" required></div>
+                    <div class="row">
+                        <div class="col-6 mb-3"><label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Qtd Inicial *</label><input type="number" step="0.1" name="quantidadeEstoque" class="form-control" value="1" required></div>
+                        <div class="col-6 mb-3"><label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Venda (R$) *</label><input type="number" step="0.01" name="precoVenda" class="form-control" required></div>
+                    </div>
+                    <input type="hidden" name="codigo" value=""><input type="hidden" name="precoCusto" value="0">
+                    <button type="submit" class="btn-primary-custom w-100 justify-content-center" style="background: var(--col-aguardando);">Salvar Estoque</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNovoServico" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0" style="border-top: 3px solid var(--col-aberta) !important;">
+            <div class="modal-header py-3">
+                <h6 class="modal-title" style="font-family: var(--font-display); letter-spacing: 1px; color: var(--text-primary);">NOVO SERVIÇO PADRÃO</h6>
+                <button type="button" class="btn-close btn-close-white" style="opacity: 0.5;" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form hx-post="/servicos-padrao/rapido" hx-target="#bloco-select-servicos" hx-swap="outerHTML" hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovoServico')).hide(); this.reset(); lucide.createIcons();}">
+                    <div class="mb-3"><label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Descrição do Serviço *</label><input type="text" name="descricao" class="form-control" required placeholder="Ex: CARGA DE GÁS"></div>
+                    <div class="mb-4"><label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Valor Fixo (R$) *</label><input type="number" step="0.01" name="valorPadrao" class="form-control" required></div>
+                    <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar Tabela</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function enviarWhatsApp(celularBruto, nomeCliente, numeroOs, modeloVeiculo, valorTotal) {
+        let celularLimpo = celularBruto.replace(/\D/g, '');
+        if (celularLimpo.length <= 11) { celularLimpo = '55' + celularLimpo; }
+        let mensagem = `Olá ${nomeCliente}! Tudo bem?%0A%0AA manutenção do seu *${modeloVeiculo}* (O.S. nº ${numeroOs}) foi finalizada! ✅%0A%0AO valor total do serviço ficou em *R$ ${valorTotal}*.%0AO veículo já está disponível para retirada na *Cambiomatic*.%0A%0AQualquer dúvida, estamos à disposição!`;
+        window.open(`https://api.whatsapp.com/send?phone=${celularLimpo}&text=${mensagem}`, '_blank');
+    }
+</script>
+</body>
+</html>

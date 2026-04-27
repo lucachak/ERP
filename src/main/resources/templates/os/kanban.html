@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragmentos/cabecalho :: head('Quadro Kanban - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<style>
+    /* Container principal com scroll horizontal e tela fixa */
+    .kanban-wrapper {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        padding: 0 24px 40px;
+        overflow-x: auto;
+        min-height: calc(100vh - 180px); /* Preenche a tela restante */
+        overscroll-behavior-x: contain;
+    }
+
+    /* Scrollbar horizontal elegante para o Quadro */
+    .kanban-wrapper::-webkit-scrollbar { height: 8px; }
+    .kanban-wrapper::-webkit-scrollbar-track { background: transparent; }
+    .kanban-wrapper::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
+    .kanban-wrapper::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* Estilo das Colunas */
+    .kanban-col {
+        flex: 0 0 320px; /* Largura fixa, não encolhe ao espremer a tela */
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 180px); /* Impede a coluna de passar da altura da tela */
+        box-shadow: var(--shadow-card);
+    }
+
+    .col-header {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-surface);
+        border-radius: 12px 12px 0 0;
+        border-top: 3px solid var(--col-accent); /* Linha indicadora de cor no topo */
+    }
+
+    .col-title {
+        font-family: var(--font-display);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .col-count {
+        background: var(--col-bg);
+        color: var(--col-accent);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+    }
+
+    /* Container rolável ONDE OS CARTÕES FICAM (O segredo do design profissional) */
+    .kanban-cards-container {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto; /* Scroll apenas aqui dentro */
+        background: var(--bg-base); /* Cria contraste com a borda da coluna */
+        border-radius: 0 0 12px 12px;
+        flex: 1;
+    }
+
+    /* Scrollbar vertical sutil para a lista de cartões */
+    .kanban-cards-container::-webkit-scrollbar { width: 6px; }
+    .kanban-cards-container::-webkit-scrollbar-track { background: transparent; }
+    .kanban-cards-container::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
+    .kanban-cards-container::-webkit-scrollbar-thumb:hover { background: var(--border-mid); }
+
+    /* Design dos Cartões (Estilo Jira / Linear) */
+    .kanban-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 16px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: relative;
+    }
+
+    .kanban-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--col-accent);
+        box-shadow: 0 8px 16px -4px rgba(0,0,0,0.1);
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: center; }
+
+    .card-os-badge {
+        background: var(--col-bg);
+        color: var(--col-accent);
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: opacity 0.2s;
+        border: 1px solid transparent;
+    }
+    .card-os-badge:hover { opacity: 0.8; border-color: var(--col-accent); }
+
+    .card-date {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .card-body-info { display: flex; flex-direction: column; gap: 8px; }
+
+    .client-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+        line-height: 1.3;
+    }
+
+    .vehicle-info {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-elevated);
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: fit-content;
+        border: 1px solid var(--border-subtle);
+    }
+
+    /* Select de Status Minimalista */
+    .status-select-modern {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        background-color: var(--bg-base);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-family: var(--font-body);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+
+    .status-select-modern:hover { border-color: var(--col-accent); color: var(--text-primary); }
+    .status-select-modern:focus { outline: none; border-color: var(--col-accent); box-shadow: 0 0 0 3px var(--col-bg); }
+
+    /* O.S. Encerradas ficam visualmente "apagadas" */
+    .card-encerrado { opacity: 0.7; background: var(--bg-base); }
+    .card-encerrado .client-name { color: var(--text-secondary); }
+    .card-encerrado:hover { opacity: 1; }
+</style>
+
+<div class="app-layout" id="quadro-kanban" th:fragment="quadroKanban">
+
+    <div class="container-fluid px-4 mb-4 mt-4">
+        <div class="container-fluid px-4 mb-4 mt-4">
+            <div class="page-header pb-0 pt-0 border-0 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="page-eyebrow">Acompanhamento Operacional</span>
+                    <h1 class="page-title">KANBAN DE SERVIÇOS</h1>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="position-relative">
+                        <i data-lucide="search" class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+                        <input type="search" name="termo" class="form-control" placeholder="Buscar Cliente, O.S. ou Placa..."
+                               style="padding-left: 36px; width: 300px; background: var(--bg-surface); border: 1px solid var(--border-subtle);"
+                               th:value="${termo}"
+                               hx-get="/os/kanban"
+                               hx-trigger="keyup changed delay:400ms, search"
+                               hx-target="#quadro-kanban"
+                               hx-select="#quadro-kanban"
+                               hx-swap="outerHTML">
+                    </div>
+
+                    <a href="/os/nova" class="btn-primary-custom"><i data-lucide="plus" width="18" height="18"></i> Nova O.S.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="kanban-wrapper">
+
+        <section class="kanban-col" style="--col-accent: var(--col-aberta); --col-bg: var(--col-aberta-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="inbox" width="16" height="16" style="color: var(--col-aberta);"></i> Orçamentos</div>
+                <span class="col-count" th:text="${#lists.size(abertas)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${abertas}" class="kanban-card">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-date"><i data-lucide="calendar" width="12" height="12"></i> <span th:text="${#temporals.format(os.dataEmissao, 'dd/MM')}"></span></span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
+                        <option value="Aberta" selected>Aberta</option>
+                        <option value="Aguardando Peça">Aguardando Peça</option>
+                        <option value="Em Serviço">Em Serviço</option>
+                        <option value="Encerrada">Encerrada</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+        <section class="kanban-col" style="--col-accent: var(--col-aguardando); --col-bg: var(--col-aguardando-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="package-search" width="16" height="16" style="color: var(--col-aguardando);"></i> Aguardando Peça</div>
+                <span class="col-count" th:text="${#lists.size(aguardando)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${aguardando}" class="kanban-card">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-date"><i data-lucide="calendar" width="12" height="12"></i> <span th:text="${#temporals.format(os.dataEmissao, 'dd/MM')}"></span></span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
+                        <option value="Aberta">Aberta</option>
+                        <option value="Aguardando Peça" selected>Aguardando Peça</option>
+                        <option value="Em Serviço">Em Serviço</option>
+                        <option value="Encerrada">Encerrada</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+        <section class="kanban-col" style="--col-accent: var(--col-servico); --col-bg: var(--col-servico-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="wrench" width="16" height="16" style="color: var(--col-servico);"></i> Em Serviço</div>
+                <span class="col-count" th:text="${#lists.size(emServico)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${emServico}" class="kanban-card">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-date"><i data-lucide="calendar" width="12" height="12"></i> <span th:text="${#temporals.format(os.dataEmissao, 'dd/MM')}"></span></span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
+                        <option value="Aberta">Aberta</option>
+                        <option value="Aguardando Peça">Aguardando Peça</option>
+                        <option value="Em Serviço" selected>Em Serviço</option>
+                        <option value="Encerrada">Encerrada</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+        <section class="kanban-col" style="--col-accent: var(--col-encerrada); --col-bg: var(--col-encerrada-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="check-circle-2" width="16" height="16" style="color: var(--col-encerrada);"></i> Finalizadas</div>
+                <span class="col-count" th:text="${#lists.size(encerradas)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${encerradas}" class="kanban-card card-encerrado">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-os-badge" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--col-encerrada);" th:if="${os.valorTotal != null}">
+                            R$ <span th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}"></span>
+                        </span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
+                        <option value="Aberta">Reabrir O.S.</option>
+                        <option value="Aguardando Peça">Aguardando Peça</option>
+                        <option value="Em Serviço">Em Serviço</option>
+                        <option value="Encerrada" selected>Encerrada ✓</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

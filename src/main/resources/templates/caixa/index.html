@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/cabecalho :: head('Financeiro - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5">
+    <div class="page-header mb-4">
+        <div>
+            <span class="page-eyebrow">Contas a Pagar e Receber</span>
+            <h1 class="page-title">VISÃO FINANCEIRA</h1>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <div class="d-flex align-items-center gap-2" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 8px 16px; border-radius: 8px;">
+                <i data-lucide="calendar" width="16" height="16" style="color: var(--text-muted);"></i>
+                <form action="/caixa" method="get" class="m-0">
+                    <input type="month" name="mesAno" th:value="${mesAnoAtual}" onchange="this.form.submit()" style="background: transparent; border: none; color: var(--text-primary); font-weight: 500; font-size: 14px; outline: none; color-scheme: dark;">
+                </form>
+            </div>
+
+            <a th:href="@{/caixa/exportar(mesAno=${mesAnoAtual})}" class="btn-outline-custom">
+                <i data-lucide="download" width="16" height="16"></i> Exportar CSV
+            </a>
+
+            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovaTransacao">
+                <i data-lucide="plus" width="16" height="16"></i> Novo Lançamento
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="stat-chip">
+                <div class="stat-label"><i data-lucide="arrow-down-to-line" width="16" height="16" style="color: var(--col-encerrada);"></i> Entradas do Mês</div>
+                <div class="stat-value">R$ <span th:text="${#numbers.formatDecimal(totalEntradas, 1, 'POINT', 2, 'COMMA')}"></span></div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-chip">
+                <div class="stat-label"><i data-lucide="arrow-up-from-line" width="16" height="16" style="color: var(--col-danger);"></i> Saídas do Mês</div>
+                <div class="stat-value">R$ <span th:text="${#numbers.formatDecimal(totalSaidas, 1, 'POINT', 2, 'COMMA')}"></span></div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-chip" style="background: var(--bg-elevated); border: 1px solid var(--border-mid);">
+                <div class="stat-label"><i data-lucide="scale" width="16" height="16"></i> Saldo Realizado</div>
+                <div class="stat-value" th:style="${saldo >= 0} ? 'color: var(--col-encerrada);' : 'color: var(--col-danger);'">
+                    R$ <span th:text="${#numbers.formatDecimal(saldo, 1, 'POINT', 2, 'COMMA')}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table-dark-custom">
+                    <thead style="background: var(--bg-surface);">
+                    <tr>
+                        <th class="ps-4">Vencimento</th>
+                        <th>Descrição / Categoria</th>
+                        <th>Tipo / Pagamento</th>
+                        <th>Valor (R$)</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${transacoes}">
+                        <td class="ps-4">
+                            <div style="font-weight: 500; color: var(--text-primary);" th:text="${#temporals.format(t.dataVencimento, 'dd/MM/yyyy')}"></div>
+                        </td>
+
+                        <td>
+                            <div style="font-weight: 600; color: var(--text-primary);" th:text="${t.descricao}"></div>
+                            <div style="font-size: 12px; color: var(--text-muted);" th:text="${t.categoria}"></div>
+                        </td>
+
+                        <td>
+                            <span th:if="${t.tipo == 'ENTRADA'}" style="color: var(--col-encerrada); font-size: 12px; font-weight: 600;"><i data-lucide="trending-up" width="14" height="14" class="me-1"></i>Receita</span>
+                            <span th:if="${t.tipo == 'SAIDA'}" style="color: var(--col-danger); font-size: 12px; font-weight: 600;"><i data-lucide="trending-down" width="14" height="14" class="me-1"></i>Despesa</span>
+                            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;" th:text="${t.formaPagamento}"></div>
+                        </td>
+
+                        <td style="font-family: var(--font-mono); font-weight: 600; font-size: 15px;" th:styleappend="${t.tipo == 'ENTRADA' ? 'color: var(--col-encerrada)' : 'color: var(--text-primary)'}">
+                            <span th:text="${t.tipo == 'SAIDA' ? '- ' : '+ '}"></span>R$ <span th:text="${#numbers.formatDecimal(t.valor, 1, 'POINT', 2, 'COMMA')}"></span>
+                        </td>
+
+                        <td>
+                            <span class="badge-custom" th:if="${t.status == 'PAGO'}" style="background: var(--col-encerrada-bg); color: var(--col-encerrada);"><i data-lucide="check-circle-2" width="12" height="12"></i> Efetuado</span>
+                            <span class="badge-custom" th:if="${t.status == 'PENDENTE'}" style="background: var(--col-aguardando-bg); color: var(--col-aguardando);"><i data-lucide="clock" width="12" height="12"></i> Pendente</span>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <form th:if="${t.status == 'PENDENTE'}" th:action="@{/caixa/baixar/{id}(id=${t.id})}" method="post">
+                                    <input type="hidden" name="mesAnoAtual" th:value="${mesAnoAtual}">
+                                    <button type="submit" class="btn-nav-action" style="color: var(--col-encerrada);" title="Marcar como Pago"><i data-lucide="check" width="16" height="16"></i></button>
+                                </form>
+
+                                <form th:action="@{/caixa/excluir/{id}(id=${t.id})}" method="post" onsubmit="return confirm('Excluir este lançamento financeiro?');">
+                                    <input type="hidden" name="mesAnoAtual" th:value="${mesAnoAtual}">
+                                    <button type="submit" class="btn-nav-action" style="color: var(--text-muted);" title="Excluir"><i data-lucide="trash-2" width="16" height="16"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(transacoes)}">
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i data-lucide="receipt" width="48" height="48" class="mb-3 opacity-50"></i><br>
+                            Nenhum lançamento financeiro neste período.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNovaTransacao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="font-family: var(--font-display); font-weight: 700; font-size: 18px;">
+                    Novo Lançamento Financeiro
+                </h6>
+                <button type="button" class="btn-close btn-close-white" style="opacity: 0.5;" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/caixa/nova" method="post">
+                    <input type="hidden" name="mesAnoAtual" th:value="${mesAnoAtual}">
+
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Descrição da Movimentação *</label>
+                            <input type="text" name="descricao" class="form-control" required placeholder="Ex: Pagamento Fornecedor Peças">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Valor (R$) *</label>
+                            <input type="number" step="0.01" name="valor" class="form-control" style="font-family: var(--font-mono); font-weight: bold;" required placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Tipo de Lançamento *</label>
+                            <select name="tipo" class="form-select" required>
+                                <option value="SAIDA">Despesa (A Pagar)</option>
+                                <option value="ENTRADA">Receita (A Receber)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Vencimento *</label>
+                            <input type="date" name="dataVencimento" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Status Inicial *</label>
+                            <select name="status" class="form-select" required>
+                                <option value="PENDENTE">Pendente (Agendado)</option>
+                                <option value="PAGO">Já Efetuado (Pago/Recebido)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Categoria / Centro de Custo</label>
+                            <select name="categoria" class="form-select">
+                                <option value="SERVIÇOS (O.S.)">Serviços (O.S.)</option>
+                                <option value="FORNECEDORES">Fornecedores / Peças</option>
+                                <option value="IMPOSTOS E TAXAS">Impostos e Taxas</option>
+                                <option value="SALÁRIOS / COMISSÕES">Salários / Comissões</option>
+                                <option value="DESPESAS FIXAS (Água/Luz/Net)">Despesas Fixas</option>
+                                <option value="OUTROS" selected>Outros</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Forma de Pagamento</label>
+                            <select name="formaPagamento" class="form-select">
+                                <option value="PIX" selected>PIX</option>
+                                <option value="BOLETO">Boleto Bancário</option>
+                                <option value="CARTÃO DE CRÉDITO">Cartão de Crédito</option>
+                                <option value="CARTÃO DE DÉBITO">Cartão de Débito</option>
+                                <option value="DINHEIRO">Dinheiro</option>
+                                <option value="TRANSFERÊNCIA TED">Transferência (TED)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top" style="border-color: var(--border-subtle) !important;">
+                        <button type="button" class="btn-outline-custom" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn-primary-custom">Salvar Lançamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
