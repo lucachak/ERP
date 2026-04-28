@@ -16,23 +16,6 @@
                         th:text="'#' + ${os.numeroOs}"></span></h1>
             </div>
             <div class="d-flex flex-wrap gap-2">
-                <button
-                    th:if="${os.situacao == 'Encerrada' and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
-                    class="btn-primary-custom" style="background: var(--col-encerrada);"
-                    th:onclick="enviarWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]], [[${os.veiculo.modelo}]], [[${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}]] )">
-                    <i data-lucide="message-circle" width="18" height="18"></i> Avisar Cliente
-                </button>
-
-                <button th:if="${os.cliente.celular != null and !os.cliente.celular.isBlank()}"
-                    class="btn-outline-custom" style="color: var(--col-servico); border-color: rgba(16,185,129,0.3);"
-                    th:onclick="enviarViaWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]])">
-                    <i data-lucide="send" width="18" height="18"></i> Enviar Via
-                </button>
-
-                <a th:href="@{/os/{id}/imprimir(id=${os.id})}" target="_blank" class="btn-outline-custom"
-                    style="color: var(--col-aberta); border-color: rgba(59,130,246,0.3);">
-                    <i data-lucide="printer" width="18" height="18"></i> Imprimir
-                </a>
                 <a href="/os" class="btn-outline-custom">Voltar</a>
             </div>
         </div>
@@ -319,6 +302,26 @@
                                 <div class="col-4"
                                     style="font-family: var(--font-mono); font-size: 32px; font-weight: 600; color: var(--col-encerrada);"
                                     th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}">0,00
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex justify-content-end gap-2 flex-wrap">
+                                    <button
+                                        th:if="${os.situacao == 'Encerrada' and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                                        class="btn-primary-custom" style="background: var(--col-encerrada);"
+                                        th:onclick="enviarWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]], [[${os.veiculo.modelo}]], [[${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}]] )">
+                                        <i data-lucide="message-circle" width="18" height="18"></i> Avisar Cliente
+                                    </button>
+
+                                    <button th:if="${os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                                        class="btn-outline-custom" style="color: var(--col-servico); border-color: rgba(16,185,129,0.3);"
+                                        th:onclick="enviarViaWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]])">
+                                        <i data-lucide="send" width="18" height="18"></i> Enviar Via
+                                    </button>
+
+                                    <a th:href="@{/os/{id}/imprimir(id=${os.id})}" target="_blank" class="btn-outline-custom"
+                                        style="color: var(--col-aberta); border-color: rgba(59,130,246,0.3);">
+                                        <i data-lucide="printer" width="18" height="18"></i> Imprimir
+                                    </a>
                                 </div>
                             </div>
                         </div>

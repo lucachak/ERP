@@ -69,27 +69,7 @@
     <div class="border p-2 fst-italic mt-1" th:text="${os.problemaReclamado != null && !os.problemaReclamado.isBlank() ? os.problemaReclamado : 'Nenhuma observação registrada.'}"></div>
 </div>
 
-<div class="box-title mt-2">CHECKLIST TÉCNICO DE AR CONDICIONADO</div>
-<div class="border p-2 mb-4">
-    <div class="row text-center">
-        <div class="col-3">
-            <span class="small fw-bold">Pressão do Gás:</span><br>
-            <span th:text="${os.checkPressaoGas != null && !os.checkPressaoGas.isEmpty() ? os.checkPressaoGas : 'Não Avaliado'}"></span>
-        </div>
-        <div class="col-3 border-start border-dark">
-            <span class="small fw-bold">Filtro de Cabine:</span><br>
-            <span th:text="${os.checkFiltroCabine != null && !os.checkFiltroCabine.isEmpty() ? os.checkFiltroCabine : 'Não Avaliado'}"></span>
-        </div>
-        <div class="col-3 border-start border-dark">
-            <span class="small fw-bold">Compressor:</span><br>
-            <span th:text="${os.checkCompressor != null && !os.checkCompressor.isEmpty() ? os.checkCompressor : 'Não Avaliado'}"></span>
-        </div>
-        <div class="col-3 border-start border-dark">
-            <span class="small fw-bold">Higienização:</span><br>
-            <span th:text="${os.checkHigienizacao != null && !os.checkHigienizacao.isEmpty() ? os.checkHigienizacao : 'Não Avaliado'}"></span>
-        </div>
-    </div>
-</div>
+
 
 <div class="box-title">DESCRIÇÃO DOS SERVIÇOS E PEÇAS</div>
 <table class="table table-print w-100 mb-4">
