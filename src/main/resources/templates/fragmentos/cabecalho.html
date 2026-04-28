@@ -30,7 +30,10 @@
     <div class="bg-grid" aria-hidden="true"></div>
 
     <div class="navbar-elite d-flex justify-content-between align-items-center p-3 mb-4 shadow-sm">
-        <div class="d-flex align-items-center gap-4">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-nav-action d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="padding: 6px 10px;">
+                <i data-lucide="menu" width="20" height="20"></i>
+            </button>
             <a href="/os" class="brand-logo">
                 <i data-lucide="wind" width="24" height="24"></i> L.
             </a>
@@ -70,6 +73,37 @@
                     <i data-lucide="log-out" width="16" height="16"></i>
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Offcanvas Mobile Menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel" style="background: var(--bg-surface); border-right: 1px solid var(--border-subtle);">
+        <div class="offcanvas-header border-bottom" style="border-color: var(--border-subtle) !important; padding: 20px 24px;">
+            <h5 class="offcanvas-title brand-logo m-0" id="mobileMenuLabel"><i data-lucide="wind" width="24" height="24"></i> L.</h5>
+            <button type="button" class="btn-close btn-close-white" style="opacity: 0.5;" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <div class="d-flex flex-column gap-3">
+                <a class="nav-link-elite mobile full-mode-only" href="/dashboard" style="font-size: 16px; padding: 12px;"><i data-lucide="layout-dashboard" width="20" height="20"></i> Dashboard</a>
+                <a class="nav-link-elite mobile" href="/estoque" style="font-size: 16px; padding: 12px;"><i data-lucide="package" width="20" height="20"></i> Estoque</a>
+                <a class="nav-link-elite mobile" href="/os" style="font-size: 16px; padding: 12px;"><i data-lucide="file-cog" width="20" height="20"></i> Serviços</a>
+                <a class="nav-link-elite mobile full-mode-only" href="/os/kanban" style="font-size: 16px; padding: 12px;"><i data-lucide="kanban" width="20" height="20"></i> Oficina</a>
+                <a class="nav-link-elite mobile full-mode-only" href="/agenda" style="font-size: 16px; padding: 12px;"><i data-lucide="calendar" width="20" height="20"></i> Agenda</a>
+                <a class="nav-link-elite mobile" href="/clientes" style="font-size: 16px; padding: 12px;"><i data-lucide="users" width="20" height="20"></i> Clientes</a>
+                <a class="nav-link-elite mobile full-mode-only" href="/caixa" style="font-size: 16px; padding: 12px;"><i data-lucide="wallet" width="20" height="20"></i> Financeiro</a>
+            </div>
+            
+            <div class="mt-auto pt-4 pb-2 border-top" style="border-color: var(--border-subtle) !important; position: absolute; bottom: 20px; width: calc(100% - 48px);">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <i data-lucide="circle-user-round" width="20" height="20" style="color: var(--text-secondary);"></i>
+                    <span sec:authentication="name" style="text-transform: capitalize; font-weight: 600;">User</span>
+                </div>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn-primary-custom w-100 justify-content-center" style="background: var(--col-danger-bg); color: var(--col-danger);">
+                        <i data-lucide="log-out" width="18" height="18"></i> Sair do Sistema
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
