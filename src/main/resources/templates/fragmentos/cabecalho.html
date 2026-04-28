@@ -19,6 +19,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .full-mode-only { display: none !important; }
+        body.full-mode .full-mode-only { display: inline-flex !important; }
+        body.full-mode a.full-mode-only.btn-nav-action { display: flex !important; }
+    </style>
 </head>
 
 <div th:fragment="navbar">
@@ -31,9 +36,13 @@
             </a>
 
             <nav class="nav d-none d-lg-flex gap-2">
+                <a class="nav-link-elite full-mode-only" href="/dashboard"><i data-lucide="layout-dashboard" width="16" height="16"></i> Dashboard</a>
                 <a class="nav-link-elite" href="/estoque"><i data-lucide="package" width="16" height="16"></i> Estoque</a>
                 <a class="nav-link-elite" href="/os"><i data-lucide="file-cog" width="16" height="16"></i> Serviços</a>
+                <a class="nav-link-elite full-mode-only" href="/os/kanban"><i data-lucide="kanban" width="16" height="16"></i> Oficina</a>
+                <a class="nav-link-elite full-mode-only" href="/agenda"><i data-lucide="calendar" width="16" height="16"></i> Agenda</a>
                 <a class="nav-link-elite" href="/clientes"><i data-lucide="users" width="16" height="16"></i> Clientes</a>
+                <a class="nav-link-elite full-mode-only" href="/caixa"><i data-lucide="wallet" width="16" height="16"></i> Financeiro</a>
             </nav>
         </div>
 
@@ -44,8 +53,12 @@
                 <span id="icon-moon" style="display: none;"><i data-lucide="moon" width="16" height="16"></i></span>
             </button>
 
-            <!-- Backup button hidden in light version -->
-            <a sec:authorize="hasRole('ADMIN')" href="/backup/download" class="btn-nav-action" title="Backup Base de Dados" style="display:none;">
+            <button id="btn-unlock-site" class="btn-nav-action" title="Desbloquear Site Completo">
+                <i data-lucide="unlock" width="16" height="16"></i>
+            </button>
+
+            <!-- Backup button hidden in light version, but visible in full mode -->
+            <a sec:authorize="hasRole('ADMIN')" href="/backup/download" class="btn-nav-action full-mode-only" title="Backup Base de Dados">
                 <i data-lucide="database-backup" width="16" height="16"></i>
             </a>
             <div class="btn-nav-action" style="cursor: default; border: none;">
@@ -104,6 +117,17 @@
                 htmlEl.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
+            });
+
+            // Lógica do botão de desbloqueio do site (Modo Completo)
+            const unlockBtn = document.getElementById('btn-unlock-site');
+            const savedMode = localStorage.getItem('full-mode') === 'true';
+            if (savedMode) document.body.classList.add('full-mode');
+
+            unlockBtn.addEventListener('click', () => {
+                document.body.classList.toggle('full-mode');
+                const isFull = document.body.classList.contains('full-mode');
+                localStorage.setItem('full-mode', isFull);
             });
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
