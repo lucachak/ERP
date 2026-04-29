@@ -102,6 +102,16 @@
 </div>
 
 <script>
+    let clienteSelect;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        clienteSelect = new TomSelect("#inputClienteId", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "-- Digite para buscar o cliente --"
+        });
+    });
+
     function toggleCliente() {
         const tipo = document.querySelector('input[name="tipoClienteToggle"]:checked').value;
         const blocoExistente = document.getElementById('blocoClienteExistente');
@@ -114,12 +124,16 @@
             blocoNovo.style.display = 'none';
             inputClienteId.required = true;
             inputClienteNome.required = false;
-            inputClienteNome.value = ''; // Limpa o campo de nome para não nflitar
+            inputClienteNome.value = ''; // Limpa o campo de nome para não conflitar
+            if (clienteSelect) clienteSelect.enable();
         } else {
             blocoExistente.style.display = 'none';
             blocoNovo.style.display = 'block';
             inputClienteId.required = false;
-            inputClienteId.value = ''; // Limpa a seleção do select
+            if (clienteSelect) {
+                clienteSelect.clear();
+                clienteSelect.disable();
+            }
             inputClienteNome.required = true;
         }
     }
