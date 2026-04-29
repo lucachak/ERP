@@ -41,16 +41,16 @@
                     </thead>
                     <tbody>
                     <tr th:each="os : ${ordensPage.content}">
-                        <td class="ps-4"><a th:href="@{/os/{id}(id=${os.id})}" style="font-family: var(--font-mono); font-weight: 600; color: var(--col-aberta); text-decoration: none; font-size: 15px;" th:text="'#' + ${os.numeroOs}">001</a></td>
+                        <td class="ps-4"><a th:href="@{/os/{id}(id=${os.id})}" style="font-family: var(--font-mono); font-weight: 600; color: var(--col-aberta); text-decoration: none; font-size: 16px;" th:text="'#' + ${os.numeroOs}">001</a></td>
                         <td>
-                            <strong style="color: var(--text-primary); font-size: 15px;" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></strong><br>
-                            <span style="color: var(--text-muted); font-size: 12px; font-family: var(--font-mono);" th:text="${os.cliente != null ? os.cliente.celular : ''}"></span>
+                            <strong style="color: var(--text-primary); font-size: 16px;" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></strong><br>
+                            <span style="color: var(--text-muted); font-size: 14px; font-family: var(--font-mono);" th:text="${os.cliente != null ? os.cliente.celular : ''}"></span>
                         </td>
                         <td>
-                            <span style="color: var(--text-secondary);" th:text="${os.veiculo.modelo}"></span><br>
-                            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);" th:text="${os.veiculo.placaChassi}"></span>
+                            <span style="color: var(--text-secondary); font-size: 15px;" th:text="${os.veiculo.modelo}"></span><br>
+                            <span style="font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);" th:text="${os.veiculo.placaChassi}"></span>
                         </td>
-                        <td style="color: var(--text-secondary); font-size: 13px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy')}"></td>
+                        <td style="color: var(--text-secondary); font-size: 14px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy')}"></td>
                         <td>
                             <span class="badge-custom"
                                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
@@ -77,7 +77,7 @@
             </div>
 
             <div class="p-3 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-mid) !important;" th:if="${ordensPage.totalPages > 1}">
-                <span style="color: var(--text-muted); font-size: 13px;">
+                <span style="color: var(--text-muted); font-size: 14px;">
                     Mostrando página <strong style="color: var(--text-primary);" th:text="${ordensPage.number + 1}">1</strong> de <strong style="color: var(--text-primary);" th:text="${ordensPage.totalPages}">5</strong>
                 </span>
                 <div class="btn-group">

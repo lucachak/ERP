@@ -16,7 +16,7 @@
 
             <form action="/os/nova" method="post">
 
-                <h6 class="pb-2 mb-3" style="color: var(--col-aberta); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">1. Dados do Cliente</h6>
+                <h6 class="pb-2 mb-3" style="color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">1. Dados do Cliente</h6>
 
                 <div class="d-flex gap-4 mb-4 pb-3 border-bottom" style="border-color: var(--border-subtle) !important;">
                     <div class="form-check">
@@ -35,7 +35,7 @@
 
                 <div id="blocoClienteExistente" class="row mb-3">
                     <div class="col-md-12">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Selecione o Cliente *</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Selecione o Cliente *</label>
                         <select name="clienteId" id="inputClienteId" class="form-select" style="background-color: var(--bg-surface);" required>
                             <option value="">-- Clique para escolher o cliente --</option>
                             <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome + ' | CPF/CNPJ: ' + (c.cpfCnpj != null ? c.cpfCnpj : 'Não informado')}"></option>
@@ -46,46 +46,46 @@
                 <div id="blocoClienteNovo" style="display: none;">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Nome do Novo Cliente *</label>
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Nome do Novo Cliente *</label>
                             <input type="text" name="clienteNome" id="inputClienteNome" class="form-control" placeholder="Ex: JOÃO SILVA">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">CPF / CNPJ</label>
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">CPF / CNPJ</label>
                             <input type="text" name="cpfCnpj" class="form-control" placeholder="Apenas números">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Celular</label>
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Celular</label>
                             <input type="text" name="celular" class="form-control" placeholder="(11) 9...">
                         </div>
                     </div>
                 </div>
 
-                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">2. Dados do Veículo</h6>
+                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">2. Dados do Veículo</h6>
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Placa / Chassi / Nº Série</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Placa / Chassi / Nº Série</label>
                         <input type="text" name="placa" class="form-control" style="font-family: var(--font-mono); text-transform: uppercase;" placeholder="ABC-1234">
                     </div>
                     <div class="col-md-5 mb-3">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Modelo *</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Modelo *</label>
                         <input type="text" name="veiculoModelo" class="form-control" required placeholder="Ex: Celta 2012 / Ar Split">
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Cor</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Cor</label>
                         <input type="text" name="veiculoCor" class="form-control" placeholder="Opcional">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 mb-2">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Ano</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Ano</label>
                         <input type="text" name="ano" class="form-control" placeholder="Ex: 2012">
                     </div>
                 </div>
 
-                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">3. Atendimento</h6>
+                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">3. Atendimento</h6>
                 <div class="row mb-3">
                     <div class="col-md-12 mb-2">
-                        <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Problema Reclamado *</label>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Problema Reclamado *</label>
                         <textarea name="problemaReclamado" class="form-control" rows="2" required placeholder="Descreva o defeito relatado..."></textarea>
                     </div>
                 </div>

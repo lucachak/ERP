@@ -23,38 +23,38 @@
         <div class="glass-card mb-4 p-4 d-flex justify-content-between flex-wrap gap-3">
             <div>
                 <span
-                    style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Cliente
+                    style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Cliente
                     / Celular</span>
                 <div style="font-size: 16px; font-weight: 600;" th:text="${os.cliente.nome}"></div>
-                <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 13px;"
+                <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 15px;"
                     th:text="${os.cliente.celular}"></div>
             </div>
             <div class="border-start ps-4" style="border-color: var(--border-mid) !important;">
                 <span
-                    style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Veículo
+                    style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Veículo
                     / Placa</span>
                 <div style="font-size: 16px; font-weight: 600;" th:text="${os.veiculo.modelo}"></div>
-                <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 13px;"
+                <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 15px;"
                     th:text="${os.veiculo.placaChassi}"></div>
             </div>
             <div class="border-start ps-4" style="border-color: var(--border-mid) !important; flex: 1;">
                 <span
-                    style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Problema
+                    style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Problema
                     Relatado</span>
                 <div style="font-size: 14px; color: var(--text-primary);" th:text="${os.problemaReclamado}"></div>
             </div>
             <div class="text-end border-start ps-4" style="border-color: var(--border-mid) !important;">
-                <div style="color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;">
+                <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">
                     Emissão: <span style="font-family: var(--font-mono); color: var(--text-primary);"
                         th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy HH:mm')}"></span>
                 </div>
                 <div th:if="${os.dataEntrega != null}"
-                    style="color: var(--col-encerrada); font-size: 12px; margin-bottom: 8px; font-weight: 600;">
+                    style="color: var(--col-encerrada); font-size: 14px; margin-bottom: 8px; font-weight: 600;">
                     Entregue: <span style="font-family: var(--font-mono);"
                         th:text="${#temporals.format(os.dataEntrega, 'dd/MM/yyyy HH:mm')}"></span>
                 </div>
                 <div th:if="${os.dataGarantia != null}"
-                    style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; background: rgba(59,130,246,0.15); color: var(--col-aberta); font-size: 11px; font-weight: 600; font-family: var(--font-mono);">
+                    style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; background: rgba(59,130,246,0.15); color: var(--col-aberta); font-size: 15px; font-weight: 600; font-family: var(--font-mono);">
                     <i data-lucide="shield-check" width="14" height="14"></i> GARANTIA ATÉ: <span
                         th:text="${#temporals.format(os.dataGarantia, 'dd/MM/yyyy')}"></span>
                 </div>
@@ -73,7 +73,7 @@
 
                             <div id="bloco-select-servicos" th:fragment="dropdownServicos"
                                 class="mb-3 pb-3 border-bottom" style="border-color: var(--border-subtle) !important;">
-                                <label class="form-label" style="font-size: 12px; color: var(--col-aberta);">Buscar
+                                <label class="form-label" style="font-size: 14px; color: var(--col-aberta);">Buscar
                                     Tabela de Preço</label>
                                 <div class="d-flex gap-2">
                                     <select name="servicoPadraoId" class="form-select form-select-sm"
@@ -93,31 +93,31 @@
 
                             <div class="mb-3">
                                 <label class="form-label"
-                                    style="font-size: 12px; color: var(--text-secondary);">Descrição (Se avulso)</label>
+                                    style="font-size: 14px; color: var(--text-secondary);">Descrição (Se avulso)</label>
                                 <input type="text" name="descricao" class="form-control form-control-sm">
                             </div>
                             <div class="row">
                                 <div class="col-6 mb-3">
-                                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Qtd
+                                    <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Qtd
                                         (Horas) *</label>
                                     <input type="number" step="0.1" name="quantidade"
                                         class="form-control form-control-sm" value="1.0" required>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label"
-                                        style="font-size: 12px; color: var(--text-secondary);">Unit. (R$)</label>
+                                        style="font-size: 14px; color: var(--text-secondary);">Unit. (R$)</label>
                                     <input type="number" step="0.01" name="valorUnitario"
                                         class="form-control form-control-sm">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Técnico
+                                <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Técnico
                                     *</label>
                                 <input type="text" name="tecnico" class="form-control form-control-sm" required
                                     placeholder="LUIZ DANIEL">
                             </div>
                             <button type="submit" class="btn-primary-custom w-100 justify-content-center text-uppercase"
-                                style="font-size: 13px;">Adicionar Serviço</button>
+                                style="font-size: 15px;">Adicionar Serviço</button>
                         </form>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
 
                             <div id="bloco-select-pecas" th:fragment="dropdownPecas" class="mb-3 pb-3 border-bottom"
                                 style="border-color: var(--border-subtle) !important;">
-                                <label class="form-label" style="font-size: 12px; color: var(--col-aguardando);">Buscar
+                                <label class="form-label" style="font-size: 14px; color: var(--col-aguardando);">Buscar
                                     no Estoque</label>
                                 <div class="d-flex gap-2">
                                     <select name="pecaEstoqueId" class="form-select form-select-sm"
@@ -152,32 +152,32 @@
                             <div class="row">
                                 <div class="col-4 mb-3">
                                     <label class="form-label"
-                                        style="font-size: 12px; color: var(--text-secondary);">Cód.</label>
+                                        style="font-size: 14px; color: var(--text-secondary);">Cód.</label>
                                     <input type="text" name="codigoPeca" class="form-control form-control-sm">
                                 </div>
                                 <div class="col-8 mb-3">
                                     <label class="form-label"
-                                        style="font-size: 12px; color: var(--text-secondary);">Descrição (Se
+                                        style="font-size: 14px; color: var(--text-secondary);">Descrição (Se
                                         avulsa)</label>
                                     <input type="text" name="descricao" class="form-control form-control-sm">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-6 mb-3">
-                                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary);">Qtd
+                                    <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Qtd
                                         *</label>
                                     <input type="number" step="0.1" name="quantidade"
                                         class="form-control form-control-sm" value="1.0" required>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label"
-                                        style="font-size: 12px; color: var(--text-secondary);">Unit. (R$)</label>
+                                        style="font-size: 14px; color: var(--text-secondary);">Unit. (R$)</label>
                                     <input type="number" step="0.01" name="valorUnitario"
                                         class="form-control form-control-sm">
                                 </div>
                             </div>
                             <button type="submit" class="btn-primary-custom w-100 justify-content-center text-uppercase"
-                                style="background: var(--col-aguardando); font-size: 13px;">Adicionar Peça</button>
+                                style="background: var(--col-aguardando); font-size: 15px;">Adicionar Peça</button>
                         </form>
                     </div>
                 </div>
@@ -279,13 +279,13 @@
                     <div class="glass-card mb-4 border-0" style="background: rgba(0,0,0,0.3);">
                         <div class="card-body p-4">
                             <div class="row text-end align-items-center">
-                                <div class="col-8" style="color: var(--text-secondary); font-size: 13px;">TOTAL SERVIÇOS
+                                <div class="col-8" style="color: var(--text-secondary); font-size: 15px;">TOTAL SERVIÇOS
                                     R$:</div>
                                 <div class="col-4" style="font-family: var(--font-mono); font-size: 16px; color: #fff;"
                                     th:text="${#numbers.formatDecimal(os.totalServicos, 1, 'POINT', 2, 'COMMA')}">0,00
                                 </div>
 
-                                <div class="col-8 mt-2" style="color: var(--text-secondary); font-size: 13px;">TOTAL
+                                <div class="col-8 mt-2" style="color: var(--text-secondary); font-size: 15px;">TOTAL
                                     PEÇAS R$:</div>
                                 <div class="col-4 mt-2"
                                     style="font-family: var(--font-mono); font-size: 16px; color: #fff;"
@@ -338,7 +338,7 @@
                                     style="border-color: var(--border-subtle) !important;">
                                     <div class="col-md-3 mb-2">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--col-servico);">Pressão Gás</label>
+                                            style="font-size: 14px; color: var(--col-servico);">Pressão Gás</label>
                                         <select name="checkPressaoGas" class="form-select form-select-sm">
                                             <option value=""
                                                 th:selected="${os.checkPressaoGas == null || os.checkPressaoGas == ''}">
@@ -353,7 +353,7 @@
                                     </div>
                                     <div class="col-md-3 mb-2">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--col-servico);">Filtro Cabine</label>
+                                            style="font-size: 14px; color: var(--col-servico);">Filtro Cabine</label>
                                         <select name="checkFiltroCabine" class="form-select form-select-sm">
                                             <option value=""
                                                 th:selected="${os.checkFiltroCabine == null || os.checkFiltroCabine == ''}">
@@ -368,7 +368,7 @@
                                     </div>
                                     <div class="col-md-3 mb-2">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--col-servico);">Compressor</label>
+                                            style="font-size: 14px; color: var(--col-servico);">Compressor</label>
                                         <select name="checkCompressor" class="form-select form-select-sm">
                                             <option value=""
                                                 th:selected="${os.checkCompressor == null || os.checkCompressor == ''}">
@@ -383,7 +383,7 @@
                                     </div>
                                     <div class="col-md-3 mb-2">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--col-servico);">Higienização</label>
+                                            style="font-size: 14px; color: var(--col-servico);">Higienização</label>
                                         <select name="checkHigienizacao" class="form-select form-select-sm">
                                             <option value=""
                                                 th:selected="${os.checkHigienizacao == null || os.checkHigienizacao == ''}">
@@ -398,14 +398,14 @@
                                 <div class="row">
                                     <div class="col-md-9 mb-3">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--text-secondary);">Observações Internas
+                                            style="font-size: 14px; color: var(--text-secondary);">Observações Internas
                                             / Cliente</label>
                                         <textarea name="observacoes" class="form-control" rows="2"
                                             th:text="${os.observacoes}"></textarea>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label"
-                                            style="font-size: 12px; color: var(--text-secondary);">Valor Frete
+                                            style="font-size: 14px; color: var(--text-secondary);">Valor Frete
                                             (R$)</label>
                                         <input type="number" step="0.01" name="frete" class="form-control"
                                             style="font-family: var(--font-mono);" th:value="${os.frete}">
@@ -424,27 +424,27 @@
                                     <div class="col-3 border-end"
                                         style="border-color: var(--border-subtle) !important;">
                                         <span
-                                            style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Gás</span>
+                                            style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Gás</span>
                                         <strong style="color: var(--col-servico);"
                                             th:text="${os.checkPressaoGas != null && !os.checkPressaoGas.isEmpty() ? os.checkPressaoGas : '-'}"></strong>
                                     </div>
                                     <div class="col-3 border-end"
                                         style="border-color: var(--border-subtle) !important;">
                                         <span
-                                            style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Filtro</span>
+                                            style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Filtro</span>
                                         <strong style="color: var(--col-servico);"
                                             th:text="${os.checkFiltroCabine != null && !os.checkFiltroCabine.isEmpty() ? os.checkFiltroCabine : '-'}"></strong>
                                     </div>
                                     <div class="col-3 border-end"
                                         style="border-color: var(--border-subtle) !important;">
                                         <span
-                                            style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Compressor</span>
+                                            style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Compressor</span>
                                         <strong style="color: var(--col-servico);"
                                             th:text="${os.checkCompressor != null && !os.checkCompressor.isEmpty() ? os.checkCompressor : '-'}"></strong>
                                     </div>
                                     <div class="col-3">
                                         <span
-                                            style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Higienização</span>
+                                            style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Higienização</span>
                                         <strong style="color: var(--col-servico);"
                                             th:text="${os.checkHigienizacao != null && !os.checkHigienizacao.isEmpty() ? os.checkHigienizacao : '-'}"></strong>
                                     </div>
@@ -482,15 +482,15 @@
                     <form hx-post="/estoque/rapido" hx-target="#bloco-select-pecas" hx-swap="outerHTML"
                         hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovaPeca')).hide(); this.reset(); lucide.createIcons(); }">
                         <div class="mb-3"><label class="form-label"
-                                style="font-size: 12px; color: var(--text-secondary);">Descrição *</label><input
+                                style="font-size: 14px; color: var(--text-secondary);">Descrição *</label><input
                                 type="text" name="descricao" class="form-control" required></div>
                         <div class="row">
                             <div class="col-6 mb-3"><label class="form-label"
-                                    style="font-size: 12px; color: var(--text-secondary);">Qtd Inicial *</label><input
+                                    style="font-size: 14px; color: var(--text-secondary);">Qtd Inicial *</label><input
                                     type="number" step="0.1" name="quantidadeEstoque" class="form-control" value="1"
                                     required></div>
                             <div class="col-6 mb-3"><label class="form-label"
-                                    style="font-size: 12px; color: var(--text-secondary);">Venda (R$) *</label><input
+                                    style="font-size: 14px; color: var(--text-secondary);">Venda (R$) *</label><input
                                     type="number" step="0.01" name="precoVenda" class="form-control" required></div>
                         </div>
                         <input type="hidden" name="codigo" value=""><input type="hidden" name="precoCusto" value="0">
@@ -516,11 +516,11 @@
                     <form hx-post="/servicos-padrao/rapido" hx-target="#bloco-select-servicos" hx-swap="outerHTML"
                         hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovoServico')).hide(); this.reset(); lucide.createIcons();}">
                         <div class="mb-3"><label class="form-label"
-                                style="font-size: 12px; color: var(--text-secondary);">Descrição do Serviço
+                                style="font-size: 14px; color: var(--text-secondary);">Descrição do Serviço
                                 *</label><input type="text" name="descricao" class="form-control" required
                                 placeholder="Ex: CARGA DE GÁS"></div>
                         <div class="mb-4"><label class="form-label"
-                                style="font-size: 12px; color: var(--text-secondary);">Valor Fixo (R$) *</label><input
+                                style="font-size: 14px; color: var(--text-secondary);">Valor Fixo (R$) *</label><input
                                 type="number" step="0.01" name="valorPadrao" class="form-control" required></div>
                         <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar
                             Tabela</button>

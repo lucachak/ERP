@@ -109,24 +109,29 @@ body { font-family: var(--font-body); background: var(--bg-base); color: var(--t
     .navbar-elite { padding: 12px 16px !important; }
     .brand-logo { font-size: 20px; }
     
-    /* Fontes menores e Paddings reduzidos em telas pequenas */
-    .page-title { font-size: 24px; }
-    .glass-card { margin-bottom: 16px !important; border-radius: 10px; }
-    .glass-header { padding: 12px 16px; font-size: 14px; }
-    .card-body { padding: 16px !important; }
+    /* Fontes maiores e Paddings otimizados em telas pequenas */
+    .page-title { font-size: 26px; }
+    .glass-card { margin-bottom: 20px !important; border-radius: 12px; }
+    .glass-header { padding: 16px 20px; font-size: 16px; }
+    .card-body { padding: 20px !important; }
     
     /* Offcanvas (Menu Mobile) Estilização */
     .offcanvas { background-color: var(--bg-surface) !important; color: var(--text-primary); }
-    .nav-link-elite.mobile { font-size: 16px !important; padding: 14px 16px !important; border-radius: 8px; margin-bottom: 4px; }
-    .nav-link-elite.mobile i { width: 22px; height: 22px; }
+    .nav-link-elite.mobile { font-size: 18px !important; padding: 16px 20px !important; border-radius: 8px; margin-bottom: 8px; }
+    .nav-link-elite.mobile i { width: 24px; height: 24px; }
     
     /* Botões na Navbar reduzidos para caber */
-    .btn-nav-action { padding: 6px 8px; }
+    .btn-nav-action { padding: 10px 12px; }
     .btn-nav-action span { display: none !important; } /* Esconde texto "User" ou similar no navbar topo */
+    
+    /* Inputs amigáveis ao iOS e legíveis */
+    .form-control, .form-select { font-size: 16px !important; padding: 12px 16px !important; }
+    .btn-primary-custom, .btn-outline-custom { font-size: 15px !important; padding: 12px 20px !important; }
     
     /* Estilos das Tabelas em Mobile - Obrigar Scroll Horizontal */
     .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table-dark-custom th, .table-dark-custom td { padding: 12px 16px; font-size: 12px; white-space: nowrap; }
+    .table-dark-custom th { padding: 14px 18px; font-size: 13px; white-space: nowrap; }
+    .table-dark-custom td { padding: 16px 18px; font-size: 15px; white-space: nowrap; }
     
     /* Quebra de Cartões Complexos (Info Cliente / OS) */
     .border-start { border-left: none !important; padding-left: 0 !important; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 12px; }
