@@ -20,9 +20,22 @@ public class ServicoPadraoService {
     }
 
     public void salvarServico(ServicoPadraoDTO dto) {
-        ServicoPadrao servico = new ServicoPadrao();
+        ServicoPadrao servico;
+        if (dto.id() != null) {
+            servico = repository.findById(dto.id()).orElseThrow(() -> new IllegalArgumentException("Serviço não encontrado"));
+        } else {
+            servico = new ServicoPadrao();
+        }
         servico.setDescricao(dto.descricao().toUpperCase());
         servico.setValorPadrao(dto.valorPadrao());
         repository.save(servico);
+    }
+
+    public void excluir(Long id) {
+        repository.deleteById(id);
+    }
+
+    public ServicoPadrao buscarPorId(Long id) {
+        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Serviço não encontrado"));
     }
 }
