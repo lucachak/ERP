@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragmentos/cabecalho :: head('Meu Perfil - Cambiomatic')}"></head>
+
+<body>
+<div th:replace="~{fragmentos/cabecalho :: navbar}"></div>
+
+<div class="container mt-4 mb-5" style="max-width: 600px;">
+    
+    <!-- Alertas (Flash Messages) -->
+    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagemSucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${mensagemErro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="glass-card mb-4" style="border: 1px solid var(--border-subtle); box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+        <div class="p-4 border-bottom d-flex align-items-center gap-3" style="background: rgba(0,0,0,0.2); border-color: var(--border-subtle) !important; border-radius: 16px 16px 0 0;">
+            <div style="background: var(--bg-surface); padding: 12px; border-radius: 50%; border: 1px solid var(--border-mid);">
+                <i data-lucide="user" width="32" height="32" style="color: var(--text-primary);"></i>
+            </div>
+            <div>
+                <h4 class="mb-1" style="font-family: var(--font-display); letter-spacing: 0.5px; color: var(--text-primary);">MEU PERFIL</h4>
+                <p class="mb-0 text-muted" style="font-size: 14px;">Gerencie suas credenciais de acesso</p>
+            </div>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <div class="mb-4 pb-4 border-bottom" style="border-color: var(--border-subtle) !important;">
+                <label class="form-label text-muted mb-1" style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Usuário Logado</label>
+                <div class="d-flex align-items-center justify-content-between">
+                    <strong style="font-size: 18px; color: var(--text-primary);" th:text="${usuario.username}">usuario</strong>
+                    <span th:if="${usuario.role == 'ROLE_ADMIN'}" class="badge bg-danger" style="font-size: 12px;">ADMIN</span>
+                    <span th:if="${usuario.role == 'ROLE_ATENDENTE'}" class="badge bg-primary" style="font-size: 12px;">ATENDENTE</span>
+                </div>
+            </div>
+
+            <form action="/perfil/salvar" method="post">
+                <h6 class="mb-3" style="color: var(--text-primary); font-family: var(--font-display);">Alterar Senha de Acesso</h6>
+                
+                <div class="mb-4">
+                    <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Nova Senha *</label>
+                    <input type="password" name="novaSenha" class="form-control form-control-lg" required placeholder="Digite a nova senha...">
+                    <small class="text-muted mt-2 d-block">Ao alterar sua senha, o sistema será desconectado se logado em outros dispositivos (em breve).</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4 pt-2">
+                    <a href="/os" class="btn-outline-custom">Voltar</a>
+                    <button type="submit" class="btn-primary-custom" style="background: var(--col-aberta); color: #fff;">
+                        <i data-lucide="key" width="16" height="16"></i> Salvar Nova Senha
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

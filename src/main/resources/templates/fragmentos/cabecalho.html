@@ -52,6 +52,7 @@
                 <a class="nav-link-elite full-mode-only" href="/os/kanban"><i data-lucide="kanban" width="16" height="16"></i> Oficina</a>
                 <a class="nav-link-elite full-mode-only" href="/agenda"><i data-lucide="calendar" width="16" height="16"></i> Agenda</a>
                 <a class="nav-link-elite" href="/clientes"><i data-lucide="users" width="16" height="16"></i> Clientes</a>
+                <a sec:authorize="hasRole('ADMIN')" class="nav-link-elite" href="/usuarios"><i data-lucide="user-cog" width="16" height="16"></i> Usuários</a>
                 <a class="nav-link-elite full-mode-only" href="/caixa"><i data-lucide="wallet" width="16" height="16"></i> Financeiro</a>
             </nav>
         </div>
@@ -71,10 +72,10 @@
             <a sec:authorize="hasRole('ADMIN')" href="/backup/download" class="btn-nav-action full-mode-only" title="Backup Base de Dados">
                 <i data-lucide="database-backup" width="16" height="16"></i>
             </a>
-            <div class="btn-nav-action" style="cursor: default; border: none;">
+            <a href="/perfil" class="btn-nav-action text-decoration-none" style="border: none;" title="Meu Perfil">
                 <i data-lucide="circle-user-round" width="16" height="16" style="color: var(--text-secondary);"></i>
-                <span sec:authentication="name" style="text-transform: capitalize;">User</span>
-            </div>
+                <span sec:authentication="name" style="text-transform: capitalize; color: var(--text-primary);">User</span>
+            </a>
             <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="btn-nav-action" style="color: var(--text-secondary);" title="Sair">
                     <i data-lucide="log-out" width="16" height="16"></i>
@@ -98,14 +99,15 @@
                 <a class="nav-link-elite mobile full-mode-only" href="/os/kanban" style="font-size: 16px; padding: 12px;"><i data-lucide="kanban" width="20" height="20"></i> Oficina</a>
                 <a class="nav-link-elite mobile full-mode-only" href="/agenda" style="font-size: 16px; padding: 12px;"><i data-lucide="calendar" width="20" height="20"></i> Agenda</a>
                 <a class="nav-link-elite mobile" href="/clientes" style="font-size: 16px; padding: 12px;"><i data-lucide="users" width="20" height="20"></i> Clientes</a>
+                <a sec:authorize="hasRole('ADMIN')" class="nav-link-elite mobile" href="/usuarios" style="font-size: 16px; padding: 12px;"><i data-lucide="user-cog" width="20" height="20"></i> Usuários</a>
                 <a class="nav-link-elite mobile full-mode-only" href="/caixa" style="font-size: 16px; padding: 12px;"><i data-lucide="wallet" width="20" height="20"></i> Financeiro</a>
             </div>
             
             <div class="mt-auto pt-4 pb-2 border-top" style="border-color: var(--border-subtle) !important; position: absolute; bottom: 20px; width: calc(100% - 48px);">
-                <div class="d-flex align-items-center gap-3 mb-3">
+                <a href="/perfil" class="d-flex align-items-center gap-3 mb-3 text-decoration-none p-2" style="background: rgba(255,255,255,0.05); border-radius: 8px;">
                     <i data-lucide="circle-user-round" width="20" height="20" style="color: var(--text-secondary);"></i>
-                    <span sec:authentication="name" style="text-transform: capitalize; font-weight: 600;">User</span>
-                </div>
+                    <span sec:authentication="name" style="text-transform: capitalize; font-weight: 600; color: var(--text-primary);">User</span>
+                </a>
                 <form th:action="@{/logout}" method="post" class="m-0">
                     <button type="submit" class="btn-primary-custom w-100 justify-content-center" style="background: var(--col-danger-bg); color: var(--col-danger);">
                         <i data-lucide="log-out" width="18" height="18"></i> Sair do Sistema
