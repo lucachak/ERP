@@ -193,7 +193,7 @@
                             Executados</div>
                         <div class="table-responsive">
                             <table class="table-dark-custom">
-                                <thead style="background: rgba(0,0,0,0.2);">
+                                <thead style="background: var(--bg-elevated);">
                                     <tr>
                                         <th>Serviço</th>
                                         <th>Qtd/Unid</th>
@@ -210,7 +210,7 @@
                                         <td style="font-family: var(--font-mono);"
                                             th:text="${#numbers.formatDecimal(item.valorUnitario, 1, 'POINT', 2, 'COMMA')}">
                                             200,00</td>
-                                        <td style="font-weight: 600; color: #fff; font-family: var(--font-mono);"
+                                        <td style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono);"
                                             th:text="${#numbers.formatDecimal(item.valorTotal, 1, 'POINT', 2, 'COMMA')}">
                                             200,00</td>
                                         <td th:text="${item.tecnico}">LUIZ</td>
@@ -237,7 +237,7 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table-dark-custom">
-                                <thead style="background: rgba(0,0,0,0.2);">
+                                <thead style="background: var(--bg-elevated);">
                                     <tr>
                                         <th>Cód.</th>
                                         <th>Descrição</th>
@@ -256,7 +256,7 @@
                                         <td style="font-family: var(--font-mono);"
                                             th:text="${#numbers.formatDecimal(peca.valorUnitario, 1, 'POINT', 2, 'COMMA')}">
                                             50,00</td>
-                                        <td style="font-weight: 600; color: #fff; font-family: var(--font-mono);"
+                                        <td style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono);"
                                             th:text="${#numbers.formatDecimal(peca.valorTotal, 1, 'POINT', 2, 'COMMA')}">
                                             50,00</td>
                                         <td>
@@ -276,19 +276,19 @@
                         </div>
                     </div>
 
-                    <div class="glass-card mb-4 border-0" style="background: rgba(0,0,0,0.3);">
+                    <div class="glass-card mb-4 border-0" style="background: var(--bg-elevated); border-left: 4px solid var(--col-encerrada) !important;">
                         <div class="card-body p-4">
                             <div class="row text-end align-items-center">
                                 <div class="col-8" style="color: var(--text-secondary); font-size: 15px;">TOTAL SERVIÇOS
                                     R$:</div>
-                                <div class="col-4" style="font-family: var(--font-mono); font-size: 16px; color: #fff;"
+                                <div class="col-4" style="font-family: var(--font-mono); font-size: 16px; color: var(--text-primary);"
                                     th:text="${#numbers.formatDecimal(os.totalServicos, 1, 'POINT', 2, 'COMMA')}">0,00
                                 </div>
 
                                 <div class="col-8 mt-2" style="color: var(--text-secondary); font-size: 15px;">TOTAL
                                     PEÇAS R$:</div>
                                 <div class="col-4 mt-2"
-                                    style="font-family: var(--font-mono); font-size: 16px; color: #fff;"
+                                    style="font-family: var(--font-mono); font-size: 16px; color: var(--text-primary);"
                                     th:text="${#numbers.formatDecimal(os.totalPecas, 1, 'POINT', 2, 'COMMA')}">0,00
                                 </div>
 
@@ -420,7 +420,7 @@
 
                             <div th:if="${os.situacao == 'Encerrada'}">
                                 <div class="row mb-4 text-center rounded p-3"
-                                    style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle);">
+                                    style="background: var(--bg-elevated); border: 1px solid var(--border-subtle);">
                                     <div class="col-3 border-end"
                                         style="border-color: var(--border-subtle) !important;">
                                         <span
@@ -450,11 +450,11 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between px-2">
-                                    <div><strong class="text-white">Obs:</strong> <span
+                                    <div><strong style="color: var(--text-primary);">Obs:</strong> <span
                                             style="color: var(--text-secondary);"
                                             th:text="${os.observacoes != null && !os.observacoes.isEmpty() ? os.observacoes : 'Nenhuma observação.'}"></span>
                                     </div>
-                                    <div><strong class="text-white">Frete R$:</strong> <span
+                                    <div><strong style="color: var(--text-primary);">Frete R$:</strong> <span
                                             style="font-family: var(--font-mono); color: var(--text-secondary);"
                                             th:text="${#numbers.formatDecimal(os.frete, 1, 'POINT', 2, 'COMMA')}">0,00</span>
                                     </div>
