@@ -8,6 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title th:text="${title}">L.</title>
 
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" th:href="@{/img/favicon-96x96.png}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}" />
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" />
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/apple-touch-icon.png}" />
+    <link rel="manifest" th:href="@{/img/site.webmanifest}" />
+
     <script>
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
