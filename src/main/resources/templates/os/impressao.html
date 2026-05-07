@@ -55,10 +55,10 @@
     <div class="col-7">
         <div class="box-title">DADOS DO CLIENTE</div>
         <div class="border p-2" style="min-height: 80px;">
-            <strong>Nome:</strong> <span th:text="${os.cliente.nome}"></span><br>
-            <strong>CPF/CNPJ:</strong> <span th:text="${os.cliente.cpfCnpj != null ? os.cliente.cpfCnpj : 'N/I'}"></span> |
-            <strong>Celular:</strong> <span th:text="${os.cliente.celular != null ? os.cliente.celular : 'N/I'}"></span><br>
-            <strong>Endereço:</strong> <span th:text="${os.cliente.endereco != null ? os.cliente.endereco : 'N/I'}"></span>
+            <strong>Nome:</strong> <span th:text="${os.cliente != null ? os.cliente.nome : 'NÃO IDENTIFICADO'}"></span><br>
+            <strong>CPF/CNPJ:</strong> <span th:text="${os.cliente != null and os.cliente.cpfCnpj != null ? os.cliente.cpfCnpj : 'N/I'}"></span> |
+            <strong>Celular:</strong> <span th:text="${os.cliente != null and os.cliente.celular != null ? os.cliente.celular : 'N/I'}"></span><br>
+            <strong>Endereço:</strong> <span th:text="${os.cliente != null and os.cliente.endereco != null ? os.cliente.endereco : 'N/I'}"></span>
         </div>
     </div>
     <div class="col-5">
@@ -145,7 +145,7 @@
     </div>
     <div class="col-6">
         <hr style="border-top: 1px solid #000; width: 80%; margin: 0 auto;">
-        <p class="mt-2 fw-bold" th:text="'Assinatura do Cliente: ' + ${os.cliente.nome}"></p>
+        <p class="mt-2 fw-bold" th:text="'Assinatura do Cliente: ' + ${os.cliente != null ? os.cliente.nome : 'NÃO IDENTIFICADO'}"></p>
         <p class="small text-muted">Reconheço e aprovo a execução dos serviços acima descritos.</p>
     </div>
 </div>

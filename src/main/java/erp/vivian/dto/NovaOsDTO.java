@@ -1,11 +1,9 @@
 package erp.vivian.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
 public record NovaOsDTO(
-        Long clienteId, // Adicionado para receber o ID se o cliente já existir
+        Long clienteId,      // ID de cliente existente (opcional)
 
-        String clienteNome, // Removido o @NotBlank para não dar erro na validação
+        String clienteNome,  // Nome para novo cliente (opcional — modo orçamento anônimo)
         String celular,
         String telefone,
         String email,
@@ -15,11 +13,12 @@ public record NovaOsDTO(
         String bairro,
         String cidade,
 
-        @NotBlank(message = "O modelo do veículo/equipamento é obrigatório.") String veiculoModelo,
+        String veiculoModelo,   // Modelo do veículo/equipamento
         String placa,
         String ano,
+        String veiculoCor,
         String prisma,
 
-        @NotBlank(message = "O problema reclamado é obrigatório.") String problemaReclamado,
+        String problemaReclamado,
         String metodoPagamento
 ) {}

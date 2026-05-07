@@ -9,58 +9,94 @@
 
     <div class="glass-card mb-4" style="border: 1px solid var(--col-aberta); box-shadow: 0 0 20px rgba(59,130,246,0.15);">
         <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background: var(--col-aberta-bg); border-color: var(--border-subtle) !important; border-radius: 16px 16px 0 0;">
-            <h5 class="mb-0" style="font-family: var(--font-display); letter-spacing: 1px; color: var(--text-primary);"><i data-lucide="file-plus-2" width="20" height="20" class="me-2" style="color: var(--col-aberta);"></i>ABERTURA DE NOVA O.S.</h5>
+            <h5 class="mb-0" style="font-family: var(--font-display); letter-spacing: 1px; color: var(--text-primary);">
+                <i data-lucide="file-plus-2" width="20" height="20" class="me-2" style="color: var(--col-aberta);"></i>ABERTURA DE NOVA O.S.
+            </h5>
             <a href="/os" class="btn-close btn-close-white" style="opacity: 0.5;"></a>
         </div>
         <div class="card-body p-4">
 
-            <form action="/os/nova" method="post">
+            <form action="/os/nova" method="post" id="formNovaOs">
 
-                <h6 class="pb-2 mb-3" style="color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">1. Dados do Cliente</h6>
+                <!-- SEÇÃO 1: TIPO DE CLIENTE -->
+                <h6 class="pb-2 mb-3" style="color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">1. Cliente</h6>
 
-                <div class="d-flex gap-4 mb-4 pb-3 border-bottom" style="border-color: var(--border-subtle) !important;">
+                <div class="d-flex gap-3 mb-4 pb-3 border-bottom flex-wrap" style="border-color: var(--border-subtle) !important;">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="tipoClienteToggle" id="tipoExistente" value="existente" checked onchange="toggleCliente()">
-                        <label class="form-check-label text-primary" for="tipoExistente" style="font-weight: 600;">
-                            <i data-lucide="users" width="16" height="16" class="me-1"></i> Selecionar Cliente Existente
+                        <label class="form-check-label" for="tipoExistente" style="font-weight: 600; color: var(--col-aberta);">
+                            <i data-lucide="users" width="16" height="16" class="me-1"></i> Cliente Existente
                         </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="tipoClienteToggle" id="tipoNovo" value="novo" onchange="toggleCliente()">
-                        <label class="form-check-label text-success" for="tipoNovo" style="font-weight: 600;">
-                            <i data-lucide="user-plus" width="16" height="16" class="me-1"></i> Cadastrar Novo Cliente
+                        <label class="form-check-label" for="tipoNovo" style="font-weight: 600; color: var(--col-encerrada);">
+                            <i data-lucide="user-plus" width="16" height="16" class="me-1"></i> Novo Cliente
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipoClienteToggle" id="tipoAnonimo" value="anonimo" onchange="toggleCliente()">
+                        <label class="form-check-label" for="tipoAnonimo" style="font-weight: 600; color: var(--text-muted);">
+                            <i data-lucide="user-x" width="16" height="16" class="me-1"></i> Sem Cadastro / Orçamento Rápido
                         </label>
                     </div>
                 </div>
 
+                <!-- Bloco: Cliente existente -->
                 <div id="blocoClienteExistente" class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Selecione o Cliente *</label>
-                        <select name="clienteId" id="inputClienteId" class="form-select" style="background-color: var(--bg-surface);" required>
+                        <select name="clienteId" id="inputClienteId" class="form-select" style="background-color: var(--bg-surface);">
                             <option value="">-- Clique para escolher o cliente --</option>
-                            <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome + ' | CPF/CNPJ: ' + (c.cpfCnpj != null ? c.cpfCnpj : 'Não informado')}"></option>
+                            <option th:each="c : ${clientes}" th:value="${c.id}"
+                                    th:text="${c.nome + ' | ' + (c.cpfCnpj != null ? c.cpfCnpj : '') + (c.celular != null ? ' | ' + c.celular : '')}"></option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Bloco: Novo cliente -->
                 <div id="blocoClienteNovo" style="display: none;">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Nome do Novo Cliente *</label>
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Nome do Cliente *</label>
                             <input type="text" name="clienteNome" id="inputClienteNome" class="form-control" placeholder="Ex: JOÃO SILVA">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">CPF / CNPJ</label>
-                            <input type="text" name="cpfCnpj" class="form-control" placeholder="Apenas números">
+                            <input type="text" name="cpfCnpj" id="inputCpfCnpj" class="form-control" placeholder="Apenas números">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Celular</label>
-                            <input type="text" name="celular" class="form-control" placeholder="(11) 9...">
+                            <input type="text" name="celular" id="inputCelular" class="form-control" placeholder="(11) 9...">
                         </div>
                     </div>
                 </div>
 
-                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">2. Dados do Veículo</h6>
+                <!-- Bloco: Orçamento anônimo -->
+                <div id="blocoAnonimo" style="display: none;">
+                    <div class="p-3 rounded mb-3" style="background: rgba(255,255,255,0.04); border: 1px dashed var(--border-subtle);">
+                        <div class="d-flex align-items-center gap-2 mb-2" style="color: var(--text-muted);">
+                            <i data-lucide="info" width="16" height="16"></i>
+                            <span style="font-size: 13px; font-weight: 600;">Modo Orçamento Rápido</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                            A O.S. será criada sem vínculo de cliente. Você pode informar um nome/telefone opcional para identificação.
+                        </p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Nome para Identificação (opcional)</label>
+                            <input type="text" name="clienteNome" id="inputNomeAnonimo" class="form-control" placeholder="Ex: FULANO (balcão)">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Telefone (opcional)</label>
+                            <input type="text" name="celular" id="inputTelAnonimo" class="form-control" placeholder="Para contato">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: VEÍCULO -->
+                <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">2. Veículo / Equipamento</h6>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Placa / Chassi / Nº Série</label>
@@ -68,32 +104,34 @@
                     </div>
                     <div class="col-md-5 mb-3">
                         <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Modelo *</label>
-                        <input type="text" name="veiculoModelo" class="form-control" required placeholder="Ex: Celta 2012 / Ar Split">
+                        <input type="text" name="veiculoModelo" id="inputVeiculoModelo" class="form-control" placeholder="Ex: Celta 2012 / Ar Split 12000 BTU">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Cor</label>
-                        <input type="text" name="veiculoCor" class="form-control" placeholder="Opcional">
+                        <input type="text" name="veiculoCor" class="form-control" placeholder="Ex: Prata">
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-3 mb-2">
                         <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Ano</label>
                         <input type="text" name="ano" class="form-control" placeholder="Ex: 2012">
                     </div>
                 </div>
 
+                <!-- SEÇÃO 3: ATENDIMENTO -->
                 <h6 class="pb-2 mb-3 mt-4 border-top pt-4" style="border-color: var(--border-subtle) !important; color: var(--col-aberta); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">3. Atendimento</h6>
                 <div class="row mb-3">
                     <div class="col-md-12 mb-2">
-                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Problema Reclamado *</label>
-                        <textarea name="problemaReclamado" class="form-control" rows="2" required placeholder="Descreva o defeito relatado..."></textarea>
+                        <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Problema / Serviço Solicitado</label>
+                        <textarea name="problemaReclamado" class="form-control" rows="2" placeholder="Descreva o defeito relatado ou serviço pedido..."></textarea>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top" style="border-color: var(--border-subtle) !important;">
                     <a href="/os" class="btn-outline-custom">Cancelar</a>
-                    <button type="submit" class="btn-primary-custom" style="background: var(--col-encerrada);">
-                        <i data-lucide="arrow-right-circle" width="18" height="18"></i> Criar O.S. e Adicionar Peças
+                    <button type="submit" id="btnCriarOs" class="btn-primary-custom" style="background: var(--col-aberta);">
+                        <i data-lucide="arrow-right-circle" width="18" height="18"></i>
+                        <span id="btnLabel">Criar O.S.</span>
                     </button>
                 </div>
             </form>
@@ -115,26 +153,32 @@
     function toggleCliente() {
         const tipo = document.querySelector('input[name="tipoClienteToggle"]:checked').value;
         const blocoExistente = document.getElementById('blocoClienteExistente');
-        const blocoNovo = document.getElementById('blocoClienteNovo');
+        const blocoNovo      = document.getElementById('blocoClienteNovo');
+        const blocoAnonimo   = document.getElementById('blocoAnonimo');
         const inputClienteId = document.getElementById('inputClienteId');
-        const inputClienteNome = document.getElementById('inputClienteNome');
+        const inputNome      = document.getElementById('inputClienteNome');
+        const btnLabel       = document.getElementById('btnLabel');
+
+        // Reset all
+        blocoExistente.style.display = 'none';
+        blocoNovo.style.display      = 'none';
+        blocoAnonimo.style.display   = 'none';
+        if (inputNome) inputNome.required = false;
 
         if (tipo === 'existente') {
             blocoExistente.style.display = 'block';
-            blocoNovo.style.display = 'none';
-            inputClienteId.required = true;
-            inputClienteNome.required = false;
-            inputClienteNome.value = ''; // Limpa o campo de nome para não conflitar
             if (clienteSelect) clienteSelect.enable();
-        } else {
-            blocoExistente.style.display = 'none';
+            btnLabel.textContent = 'Criar O.S.';
+        } else if (tipo === 'novo') {
             blocoNovo.style.display = 'block';
-            inputClienteId.required = false;
-            if (clienteSelect) {
-                clienteSelect.clear();
-                clienteSelect.disable();
-            }
-            inputClienteNome.required = true;
+            if (clienteSelect) { clienteSelect.clear(); clienteSelect.disable(); }
+            if (inputNome) inputNome.required = true;
+            btnLabel.textContent = 'Criar O.S.';
+        } else {
+            // anonimo
+            blocoAnonimo.style.display = 'block';
+            if (clienteSelect) { clienteSelect.clear(); clienteSelect.disable(); }
+            btnLabel.textContent = 'Abrir Orçamento';
         }
     }
 </script>

@@ -15,8 +15,9 @@ public class Veiculo {
     private String tipo;
     private String modelo;
     private String placaChassi;
+    private String cor;
     private String ano;
-    private String prisma; // Novo campo
+    private String prisma;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")

@@ -25,9 +25,10 @@
                 <span
                     style="font-size: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">Cliente
                     / Celular</span>
-                <div style="font-size: 16px; font-weight: 600;" th:text="${os.cliente.nome}"></div>
+                <div style="font-size: 16px; font-weight: 600;"
+                    th:text="${os.cliente != null ? os.cliente.nome : 'ORÇAMENTO AVULSO'}"></div>
                 <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 15px;"
-                    th:text="${os.cliente.celular}"></div>
+                    th:text="${os.cliente != null ? os.cliente.celular : '—'}"></div>
             </div>
             <div class="border-start ps-4" style="border-color: var(--border-mid) !important;">
                 <span
@@ -306,13 +307,13 @@
 
                                 <div class="col-12 mt-4 d-flex justify-content-end gap-2 flex-wrap">
                                     <button
-                                        th:if="${os.situacao == 'Encerrada' and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                                        th:if="${os.situacao == 'Encerrada' and os.cliente != null and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
                                         class="btn-primary-custom" style="background: var(--col-encerrada);"
                                         th:onclick="enviarWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]], [[${os.veiculo.modelo}]], [[${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}]] )">
                                         <i data-lucide="message-circle" width="18" height="18"></i> Avisar Cliente
                                     </button>
 
-                                    <button th:if="${os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                                    <button th:if="${os.cliente != null and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
                                         class="btn-outline-custom" style="color: var(--col-servico); border-color: rgba(16,185,129,0.3);"
                                         th:onclick="enviarViaWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]])">
                                         <i data-lucide="send" width="18" height="18"></i> Enviar Via
@@ -515,15 +516,22 @@
                 <div class="modal-body p-4">
                     <form hx-post="/servicos-padrao/rapido" hx-target="#bloco-select-servicos" hx-swap="outerHTML"
                         hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovoServico')).hide(); this.reset(); lucide.createIcons();}">
-                        <div class="mb-3"><label class="form-label"
-                                style="font-size: 14px; color: var(--text-secondary);">Descrição do Serviço
-                                *</label><input type="text" name="descricao" class="form-control" required
-                                placeholder="Ex: CARGA DE GÁS"></div>
-                        <div class="mb-4"><label class="form-label"
-                                style="font-size: 14px; color: var(--text-secondary);">Valor Fixo (R$) *</label><input
-                                type="number" step="0.01" name="valorPadrao" class="form-control" required></div>
-                        <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar
-                            Tabela</button>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Descrição *</label>
+                            <input type="text" name="descricao" class="form-control" required placeholder="Ex: CARGA DE GÁS">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label" style="font-size: 13px; color: var(--text-secondary);">Mão de Obra (R$) *</label>
+                                <input type="number" step="0.01" min="0" name="valorMaoDeObra" class="form-control" required placeholder="0,00">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" style="font-size: 13px; color: var(--text-secondary);">Material Est. (R$) *</label>
+                                <input type="number" step="0.01" min="0" name="valorMaterial" class="form-control" required placeholder="0,00">
+                            </div>
+                        </div>
+                        <input type="hidden" name="tempoEstimadoMin" value="0">
+                        <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar Tabela</button>
                     </form>
                 </div>
             </div>

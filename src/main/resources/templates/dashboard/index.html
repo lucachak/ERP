@@ -108,7 +108,7 @@
             <tr th:each="os : ${ultimasOs}" style="cursor: pointer;" th:onclick="'window.location.href=\'/os/' + ${os.id} + '\''">
               <td class="ps-4"><a th:href="@{/os/{id}(id=${os.id})}" class="os-number" th:text="'#' + ${os.numeroOs}">001</a></td>
               <td>
-                <strong style="color: var(--text-primary); font-size: 14px;" th:text="${os.cliente.nome}">CLIENTE FINAL</strong>
+                <strong style="color: var(--text-primary); font-size: 14px;" th:text="${os.cliente != null ? os.cliente.nome : 'ORÇAMENTO AVULSO'}">CLIENTE FINAL</strong>
               </td>
               <td>
                 <span style="color: var(--text-secondary);" th:text="${os.veiculo.modelo}"></span><br>

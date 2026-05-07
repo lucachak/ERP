@@ -36,18 +36,17 @@ public class OrdemServicoService {
     }
 
     @Transactional
-    public OrdemServico criarNovaOs(NovaOsDTO dto) { // Agora retorna a OrdemServico criada
+    public OrdemServico criarNovaOs(NovaOsDTO dto) {
 
-        Cliente cliente;
+        Cliente cliente = null;
 
-        // 1. Verifica se é um Cliente Existente ou Novo
+        // 1. Verifica o modo de cliente
         if (dto.clienteId() != null) {
+            // Modo: cliente existente
             cliente = clienteRepository.findById(dto.clienteId())
                     .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
-        } else {
-            if (dto.clienteNome() == null || dto.clienteNome().trim().isEmpty()) {
-                throw new IllegalArgumentException("O nome do cliente é obrigatório para novos cadastros.");
-            }
+        } else if (dto.clienteNome() != null && !dto.clienteNome().trim().isEmpty()) {
+            // Modo: novo cliente rápido
             cliente = new Cliente();
             cliente.setNome(dto.clienteNome().toUpperCase());
             cliente.setCelular(dto.celular());
@@ -60,17 +59,22 @@ public class OrdemServicoService {
             cliente.setCidade(dto.cidade());
             cliente = clienteRepository.save(cliente);
         }
+        // Modo anônimo: cliente = null (sem vinculação)
 
-        // 2. Cria e guarda o Veículo vinculado ao Cliente
+        // 2. Cria o veículo (pode ficar sem cliente no modo anônimo)
         Veiculo veiculo = new Veiculo();
-        veiculo.setModelo(dto.veiculoModelo().toUpperCase());
+        String modelo = (dto.veiculoModelo() != null && !dto.veiculoModelo().isBlank())
+                ? dto.veiculoModelo().toUpperCase()
+                : "NÃO INFORMADO";
+        veiculo.setModelo(modelo);
         veiculo.setPlacaChassi(dto.placa() != null ? dto.placa().toUpperCase() : null);
+        veiculo.setCor(dto.veiculoCor());
         veiculo.setAno(dto.ano());
         veiculo.setPrisma(dto.prisma());
         veiculo.setCliente(cliente);
         veiculo = veiculoRepository.save(veiculo);
 
-        // 3. Cria e guarda a O.S. vinculada a ambos
+        // 3. Cria a O.S.
         OrdemServico os = new OrdemServico();
         os.setNumeroOs(UUID.randomUUID().toString().substring(0, 6).toUpperCase());
         os.setDataEmissao(LocalDateTime.now());
@@ -80,7 +84,6 @@ public class OrdemServicoService {
         os.setCliente(cliente);
         os.setVeiculo(veiculo);
 
-        // Inicializa totais a zero
         os.setTotalServicos(BigDecimal.ZERO);
         os.setTotalPecas(BigDecimal.ZERO);
         os.setFrete(BigDecimal.ZERO);

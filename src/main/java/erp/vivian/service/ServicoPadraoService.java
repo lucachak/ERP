@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -26,8 +27,15 @@ public class ServicoPadraoService {
         } else {
             servico = new ServicoPadrao();
         }
+        BigDecimal maoDeObra = dto.valorMaoDeObra() != null ? dto.valorMaoDeObra() : BigDecimal.ZERO;
+        BigDecimal material  = dto.valorMaterial()  != null ? dto.valorMaterial()  : BigDecimal.ZERO;
+
         servico.setDescricao(dto.descricao().toUpperCase());
-        servico.setValorPadrao(dto.valorPadrao());
+        servico.setValorMaoDeObra(maoDeObra);
+        servico.setValorMaterial(material);
+        servico.setValorPadrao(maoDeObra.add(material)); // total = mão-de-obra + material
+        servico.setTempoEstimadoMin(dto.tempoEstimadoMin() != null ? dto.tempoEstimadoMin() : 0);
+        servico.setObservacoes(dto.observacoes());
         repository.save(servico);
     }
 
