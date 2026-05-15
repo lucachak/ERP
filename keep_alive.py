@@ -3,8 +3,8 @@ import random
 import time
 import urllib.request
 
-URL = "https://cambiomatic.onrender.com/login"
-URL2 = "https://fingen-zcke.onrender.com/"
+URL = "https://cambiomatic.onrender.com/"
+URL2 = "https://fingen-app.onrender.com/"
 
 
 def ping():
