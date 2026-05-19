@@ -165,10 +165,5 @@ public class OrdemServicoController {
                 .toList();
         model.addAttribute("encerradas", encerradas);
 
-        List<OrdemServico> pagas = service.buscarNoKanban("Paga", termo).stream()
-                .sorted((o1, o2) -> o2.getId().compareTo(o1.getId()))
-                .limit(15)
-                .toList();
-        model.addAttribute("pagas", pagas);
     }
 }
