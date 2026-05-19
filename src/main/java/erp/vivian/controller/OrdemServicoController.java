@@ -142,14 +142,33 @@ public class OrdemServicoController {
         return "os/kanban :: quadroKanban";
     }
 
+    @PostMapping("/{id}/situacao-detalhes")
+    public String atualizarSituacaoDetalhes(@PathVariable Long id,
+                                            @RequestParam String novaSituacao,
+                                            Model model) {
+        OrdemServico osAtualizada = service.atualizarSituacao(id, novaSituacao);
+        model.addAttribute("os", osAtualizada);
+        model.addAttribute("pecasEstoque", estoqueService.listarTodas());
+        model.addAttribute("servicosPadrao", servicoPadraoService.listarTodos());
+        return "os/detalhes :: osCompleta";
+    }
+
     private void preencherModeloKanban(Model model, String termo) {
         model.addAttribute("abertas", service.buscarNoKanban("Aberta", termo));
+        model.addAttribute("aprovadas", service.buscarNoKanban("Aprovada", termo));
         model.addAttribute("aguardando", service.buscarNoKanban("Aguardando Peça", termo));
         model.addAttribute("emServico", service.buscarNoKanban("Em Serviço", termo));
+        
         List<OrdemServico> encerradas = service.buscarNoKanban("Encerrada", termo).stream()
                 .sorted((o1, o2) -> o2.getId().compareTo(o1.getId()))
                 .limit(15)
                 .toList();
         model.addAttribute("encerradas", encerradas);
+
+        List<OrdemServico> pagas = service.buscarNoKanban("Paga", termo).stream()
+                .sorted((o1, o2) -> o2.getId().compareTo(o1.getId()))
+                .limit(15)
+                .toList();
+        model.addAttribute("pagas", pagas);
     }
 }

@@ -26,7 +26,7 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Long
 
     long countBySituacao(String situacao);
 
-    @Query("SELECT COALESCE(SUM(os.valorTotal), 0) FROM OrdemServico os WHERE os.situacao = 'Encerrada' AND os.dataEntrega >= :inicioMes AND os.dataEntrega <= :fimMes")
+    @Query("SELECT COALESCE(SUM(os.valorTotal), 0) FROM OrdemServico os WHERE (os.situacao = 'Encerrada' OR os.situacao = 'Paga') AND os.dataEntrega >= :inicioMes AND os.dataEntrega <= :fimMes")
     BigDecimal somarFaturamentoMensal(@Param("inicioMes") LocalDateTime inicioMes, @Param("fimMes") LocalDateTime fimMes);
 
     List<OrdemServico> findTop5ByOrderByDataEmissaoDesc();

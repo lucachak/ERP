@@ -216,6 +216,7 @@
 
     <main class="kanban-wrapper">
 
+        <!-- 1. ABERTAS / ORÇAMENTOS -->
         <section class="kanban-col" style="--col-accent: var(--col-aberta); --col-bg: var(--col-aberta-bg);">
             <div class="col-header">
                 <div class="col-title"><i data-lucide="inbox" width="16" height="16" style="color: var(--col-aberta);"></i> Orçamentos</div>
@@ -233,16 +234,61 @@
                         <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
                         <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
                     </div>
-                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
-                        <option value="Aberta" selected>Aberta</option>
-                        <option value="Aguardando Peça">Aguardando Peça</option>
-                        <option value="Em Serviço">Em Serviço</option>
-                        <option value="Encerrada">Encerrada</option>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
                     </select>
                 </article>
             </div>
         </section>
 
+        <!-- 2. APROVADAS -->
+        <section class="kanban-col" style="--col-accent: var(--col-aprovada); --col-bg: var(--col-aprovada-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="thumbs-up" width="16" height="16" style="color: var(--col-aprovada);"></i> Aprovadas</div>
+                <span class="col-count" th:text="${#lists.size(aprovadas)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${aprovadas}" class="kanban-card">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-date"><i data-lucide="calendar" width="12" height="12"></i> <span th:text="${#temporals.format(os.dataEmissao, 'dd/MM')}"></span></span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+        <!-- 3. AGUARDANDO PEÇA -->
         <section class="kanban-col" style="--col-accent: var(--col-aguardando); --col-bg: var(--col-aguardando-bg);">
             <div class="col-header">
                 <div class="col-title"><i data-lucide="package-search" width="16" height="16" style="color: var(--col-aguardando);"></i> Aguardando Peça</div>
@@ -260,16 +306,25 @@
                         <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
                         <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
                     </div>
-                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
-                        <option value="Aberta">Aberta</option>
-                        <option value="Aguardando Peça" selected>Aguardando Peça</option>
-                        <option value="Em Serviço">Em Serviço</option>
-                        <option value="Encerrada">Encerrada</option>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
                     </select>
                 </article>
             </div>
         </section>
 
+        <!-- 4. EM SERVIÇO -->
         <section class="kanban-col" style="--col-accent: var(--col-servico); --col-bg: var(--col-servico-bg);">
             <div class="col-header">
                 <div class="col-title"><i data-lucide="wrench" width="16" height="16" style="color: var(--col-servico);"></i> Em Serviço</div>
@@ -287,16 +342,25 @@
                         <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
                         <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
                     </div>
-                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
-                        <option value="Aberta">Aberta</option>
-                        <option value="Aguardando Peça">Aguardando Peça</option>
-                        <option value="Em Serviço" selected>Em Serviço</option>
-                        <option value="Encerrada">Encerrada</option>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
                     </select>
                 </article>
             </div>
         </section>
 
+        <!-- 5. FINALIZADAS (ENCERRADAS) -->
         <section class="kanban-col" style="--col-accent: var(--col-encerrada); --col-bg: var(--col-encerrada-bg);">
             <div class="col-header">
                 <div class="col-title"><i data-lucide="check-circle-2" width="16" height="16" style="color: var(--col-encerrada);"></i> Finalizadas</div>
@@ -316,11 +380,57 @@
                         <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
                         <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
                     </div>
-                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML">
-                        <option value="Aberta">Reabrir O.S.</option>
-                        <option value="Aguardando Peça">Aguardando Peça</option>
-                        <option value="Em Serviço">Em Serviço</option>
-                        <option value="Encerrada" selected>Encerrada ✓</option>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
+                    </select>
+                </article>
+            </div>
+        </section>
+
+        <!-- 6. PAGAS -->
+        <section class="kanban-col" style="--col-accent: var(--col-paga); --col-bg: var(--col-paga-bg);">
+            <div class="col-header">
+                <div class="col-title"><i data-lucide="banknote" width="16" height="16" style="color: var(--col-paga);"></i> Pagas</div>
+                <span class="col-count" th:text="${#lists.size(pagas)}">0</span>
+            </div>
+            <div class="kanban-cards-container">
+                <article th:each="os : ${pagas}" class="kanban-card card-encerrado">
+                    <div class="card-header">
+                        <a class="card-os-badge" th:href="@{/os/{id}(id=${os.id})}">
+                            <i data-lucide="hash" width="12" height="12"></i> <span th:text="${os.numeroOs}"></span>
+                        </a>
+                        <span class="card-os-badge" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--col-paga);" th:if="${os.valorTotal != null}">
+                            R$ <span th:text="${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}"></span>
+                        </span>
+                    </div>
+                    <div class="card-body-info">
+                        <div class="client-name" th:text="${os.cliente != null ? os.cliente.nome : 'Sem Cliente'}"></div>
+                        <div class="vehicle-info"><i data-lucide="car-front" width="14" height="14"></i> <span th:text="${os.veiculo.modelo}"></span></div>
+                    </div>
+                    <select class="status-select-modern" name="novaSituacao" th:attr="hx-post=@{/os/{id}/situacao(id=${os.id})}" hx-target="#quadro-kanban" hx-swap="outerHTML"
+                            th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
                     </select>
                 </article>
             </div>

@@ -256,9 +256,13 @@ public class OrdemServicoService {
     public OrdemServico atualizarSituacao(Long id, String novaSituacao) {
         OrdemServico os = buscarPorId(id);
         os.setSituacao(novaSituacao);
-        if ("Encerrada".equals(novaSituacao)) {
-            os.setDataEntrega(LocalDateTime.now());
-            os.setDataGarantia(java.time.LocalDate.now().plusDays(90));
+        if ("Encerrada".equals(novaSituacao) || "Paga".equals(novaSituacao)) {
+            if (os.getDataEntrega() == null) {
+                os.setDataEntrega(LocalDateTime.now());
+            }
+            if (os.getDataGarantia() == null) {
+                os.setDataGarantia(java.time.LocalDate.now().plusDays(90));
+            }
         } else {
             os.setDataEntrega(null);
             os.setDataGarantia(null);

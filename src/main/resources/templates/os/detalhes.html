@@ -11,11 +11,37 @@
         <div class="page-header border-bottom"
             style="border-color: var(--border-subtle) !important; padding-bottom: 24px; margin-bottom: 32px;">
             <div>
-                <h1 class="page-title">ORDEM DE SERVIÇO <span
-                        style="color: var(--col-aberta); font-family: var(--font-mono);"
+                <h1 class="page-title">ORDEM DE SERVIÇO <span th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta);' :
+                                  (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada);' :
+                                  (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando);' :
+                                  (os.situacao == 'Em Serviço' ? 'color: var(--col-servico);' :
+                                  (os.situacao == 'Paga' ? 'color: var(--col-paga);' :
+                                  'color: var(--col-encerrada);'))))}" style="font-family: var(--font-mono);"
                         th:text="'#' + ${os.numeroOs}"></span></h1>
             </div>
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <!-- Seletor de Status Premium -->
+                <div class="d-flex align-items-center gap-2">
+                    <span style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Status:</span>
+                    <select class="status-select-modern" name="novaSituacao"
+                        th:attr="hx-post=@{/os/{id}/situacao-detalhes(id=${os.id})}" hx-target="#os-container"
+                        hx-swap="outerHTML"
+                        th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); border-color: var(--col-aberta); background-color: var(--col-aberta-bg);' :
+                                      (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); border-color: var(--col-aprovada); background-color: var(--col-aprovada-bg);' :
+                                      (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); border-color: var(--col-aguardando); background-color: var(--col-aguardando-bg);' :
+                                      (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); border-color: var(--col-servico); background-color: var(--col-servico-bg);' :
+                                      (os.situacao == 'Paga' ? 'color: var(--col-paga); border-color: var(--col-paga); background-color: var(--col-paga-bg);' :
+                                      'color: var(--col-encerrada); border-color: var(--col-encerrada); background-color: var(--col-encerrada-bg);'))))}"
+                        style="width: 170px; font-weight: 600;">
+                        <option value="Aberta" th:selected="${os.situacao == 'Aberta'}">Aberta</option>
+                        <option value="Aprovada" th:selected="${os.situacao == 'Aprovada'}">Aprovada</option>
+                        <option value="Aguardando Peça" th:selected="${os.situacao == 'Aguardando Peça'}">Aguardando
+                            Peça</option>
+                        <option value="Em Serviço" th:selected="${os.situacao == 'Em Serviço'}">Em Serviço</option>
+                        <option value="Encerrada" th:selected="${os.situacao == 'Encerrada'}">Encerrada</option>
+                        <option value="Paga" th:selected="${os.situacao == 'Paga'}">Paga</option>
+                    </select>
+                </div>
                 <a href="/os" class="btn-outline-custom">Voltar</a>
             </div>
         </div>
@@ -63,7 +89,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 mb-4" th:if="${os.situacao == 'Aberta'}">
+            <div class="col-md-4 mb-4" th:if="${os.situacao != 'Encerrada' and os.situacao != 'Paga'}">
 
                 <div class="glass-card mb-4" style="border-top: 3px solid var(--col-aberta);">
                     <div class="glass-header" style="color: var(--col-aberta);"><i data-lucide="wrench" width="18"
@@ -185,7 +211,7 @@
 
             </div>
 
-            <div th:classappend="${os.situacao == 'Aberta' ? 'col-md-8' : 'col-md-12'}">
+            <div th:classappend="${os.situacao != 'Encerrada' and os.situacao != 'Paga' ? 'col-md-8' : 'col-md-12'}">
                 <div id="painel-dinamico" th:fragment="painelDinamico">
 
                     <div class="glass-card mb-4">
@@ -216,7 +242,7 @@
                                             200,00</td>
                                         <td th:text="${item.tecnico}">LUIZ</td>
                                         <td>
-                                            <button th:if="${os.situacao == 'Aberta'}"
+                                            <button th:if="${os.situacao != 'Encerrada' and os.situacao != 'Paga'}"
                                                 th:attr="hx-delete=@{/os/{id}/servicos/{servicoId}(id=${os.id}, servicoId=${item.id})}"
                                                 hx-target="#painel-dinamico" hx-swap="outerHTML"
                                                 class="btn btn-sm text-danger p-1" title="Remover"><i
@@ -261,7 +287,7 @@
                                             th:text="${#numbers.formatDecimal(peca.valorTotal, 1, 'POINT', 2, 'COMMA')}">
                                             50,00</td>
                                         <td>
-                                            <button th:if="${os.situacao == 'Aberta'}"
+                                            <button th:if="${os.situacao != 'Encerrada' and os.situacao != 'Paga'}"
                                                 th:attr="hx-delete=@{/os/{id}/pecas/{pecaId}(id=${os.id}, pecaId=${peca.id})}"
                                                 hx-target="#painel-dinamico" hx-swap="outerHTML"
                                                 class="btn btn-sm text-danger p-1" title="Remover"><i
@@ -277,12 +303,14 @@
                         </div>
                     </div>
 
-                    <div class="glass-card mb-4 border-0" style="background: var(--bg-elevated); border-left: 4px solid var(--col-encerrada) !important;">
+                    <div class="glass-card mb-4 border-0"
+                        style="background: var(--bg-elevated); border-left: 4px solid var(--col-encerrada) !important;">
                         <div class="card-body p-4">
                             <div class="row text-end align-items-center">
                                 <div class="col-8" style="color: var(--text-secondary); font-size: 15px;">TOTAL SERVIÇOS
                                     R$:</div>
-                                <div class="col-4" style="font-family: var(--font-mono); font-size: 16px; color: var(--text-primary);"
+                                <div class="col-4"
+                                    style="font-family: var(--font-mono); font-size: 16px; color: var(--text-primary);"
                                     th:text="${#numbers.formatDecimal(os.totalServicos, 1, 'POINT', 2, 'COMMA')}">0,00
                                 </div>
 
@@ -307,19 +335,14 @@
 
                                 <div class="col-12 mt-4 d-flex justify-content-end gap-2 flex-wrap">
                                     <button
-                                        th:if="${os.situacao == 'Encerrada' and os.cliente != null and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
+                                        th:if="${(os.situacao == 'Encerrada' or os.situacao == 'Paga') and os.cliente != null and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
                                         class="btn-primary-custom" style="background: var(--col-encerrada);"
                                         th:onclick="enviarWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]], [[${os.veiculo.modelo}]], [[${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}]] )">
                                         <i data-lucide="message-circle" width="18" height="18"></i> Avisar Cliente
                                     </button>
 
-                                    <button th:if="${os.cliente != null and os.cliente.celular != null and !os.cliente.celular.isBlank()}"
-                                        class="btn-outline-custom" style="color: var(--col-servico); border-color: rgba(16,185,129,0.3);"
-                                        th:onclick="enviarViaWhatsApp([[${os.cliente.celular}]], [[${os.cliente.nome}]], [[${os.numeroOs}]])">
-                                        <i data-lucide="send" width="18" height="18"></i> Enviar Via
-                                    </button>
-
-                                    <a th:href="@{/os/{id}/imprimir(id=${os.id})}" target="_blank" class="btn-outline-custom"
+                                    <a th:href="@{/os/{id}/imprimir(id=${os.id})}" target="_blank"
+                                        class="btn-outline-custom"
                                         style="color: var(--col-aberta); border-color: rgba(59,130,246,0.3);">
                                         <i data-lucide="printer" width="18" height="18"></i> Imprimir
                                     </a>
@@ -333,8 +356,9 @@
                         <div class="glass-header" style="color: var(--col-servico);"><i data-lucide="clipboard-check"
                                 width="20" height="20" class="me-2"></i>Checklist Técnico e Extras</div>
                         <div class="card-body p-4">
-                            <form th:if="${os.situacao == 'Aberta'}" th:attr="hx-post=@{/os/{id}/extras(id=${os.id})}"
-                                hx-target="#os-container" hx-swap="outerHTML">
+                            <form th:if="${os.situacao != 'Encerrada' and os.situacao != 'Paga'}"
+                                th:attr="hx-post=@{/os/{id}/extras(id=${os.id})}" hx-target="#os-container"
+                                hx-swap="outerHTML">
                                 <div class="row mb-4 pb-4 border-bottom"
                                     style="border-color: var(--border-subtle) !important;">
                                     <div class="col-md-3 mb-2">
@@ -419,7 +443,7 @@
                                 </div>
                             </form>
 
-                            <div th:if="${os.situacao == 'Encerrada'}">
+                            <div th:if="${os.situacao == 'Encerrada' or os.situacao == 'Paga'}">
                                 <div class="row mb-4 text-center rounded p-3"
                                     style="background: var(--bg-elevated); border: 1px solid var(--border-subtle);">
                                     <div class="col-3 border-end"
@@ -517,21 +541,28 @@
                     <form hx-post="/servicos-padrao/rapido" hx-target="#bloco-select-servicos" hx-swap="outerHTML"
                         hx-on:htmx:after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('modalNovoServico')).hide(); this.reset(); lucide.createIcons();}">
                         <div class="mb-3">
-                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Descrição *</label>
-                            <input type="text" name="descricao" class="form-control" required placeholder="Ex: CARGA DE GÁS">
+                            <label class="form-label" style="font-size: 14px; color: var(--text-secondary);">Descrição
+                                *</label>
+                            <input type="text" name="descricao" class="form-control" required
+                                placeholder="Ex: CARGA DE GÁS">
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label" style="font-size: 13px; color: var(--text-secondary);">Mão de Obra (R$) *</label>
-                                <input type="number" step="0.01" min="0" name="valorMaoDeObra" class="form-control" required placeholder="0,00">
+                                <label class="form-label" style="font-size: 13px; color: var(--text-secondary);">Mão de
+                                    Obra (R$) *</label>
+                                <input type="number" step="0.01" min="0" name="valorMaoDeObra" class="form-control"
+                                    required placeholder="0,00">
                             </div>
                             <div class="col-6">
-                                <label class="form-label" style="font-size: 13px; color: var(--text-secondary);">Material Est. (R$) *</label>
-                                <input type="number" step="0.01" min="0" name="valorMaterial" class="form-control" required placeholder="0,00">
+                                <label class="form-label"
+                                    style="font-size: 13px; color: var(--text-secondary);">Material Est. (R$) *</label>
+                                <input type="number" step="0.01" min="0" name="valorMaterial" class="form-control"
+                                    required placeholder="0,00">
                             </div>
                         </div>
                         <input type="hidden" name="tempoEstimadoMin" value="0">
-                        <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar Tabela</button>
+                        <button type="submit" class="btn-primary-custom w-100 justify-content-center">Salvar
+                            Tabela</button>
                     </form>
                 </div>
             </div>

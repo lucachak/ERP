@@ -31,10 +31,16 @@ public class DashboardController {
         LocalDateTime fimMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
 
         BigDecimal faturamentoMensal = osRepository.somarFaturamentoMensal(inicioMes, fimMes);
-        long osAbertas = osRepository.countBySituacao("Aberta");
+        long osAbertas = osRepository.countBySituacao("Aberta")
+                       + osRepository.countBySituacao("Aprovada")
+                       + osRepository.countBySituacao("Aguardando Peça")
+                       + osRepository.countBySituacao("Em Serviço");
         long alertasEstoque = pecaRepository.countByQuantidadeEstoqueLessThanEqual(2.0);
 
-        List<OrdemServico> encerradasList = osRepository.findBySituacao("Encerrada");
+        List<OrdemServico> encerradasList = new ArrayList<>();
+        encerradasList.addAll(osRepository.findBySituacao("Encerrada"));
+        encerradasList.addAll(osRepository.findBySituacao("Paga"));
+        
         long totalHoras = 0;
         int osValidas = 0;
         for (OrdemServico o : encerradasList) {
@@ -48,10 +54,12 @@ public class DashboardController {
         // --- NOVO: LÓGICA PARA OS GRÁFICOS ---
 
         // 1. Gráfico de Rosca (Status das O.S.)
-        model.addAttribute("qtdAberta", osAbertas);
+        model.addAttribute("qtdAberta", osRepository.countBySituacao("Aberta"));
+        model.addAttribute("qtdAprovada", osRepository.countBySituacao("Aprovada"));
         model.addAttribute("qtdAguardando", osRepository.countBySituacao("Aguardando Peça"));
         model.addAttribute("qtdServico", osRepository.countBySituacao("Em Serviço"));
         model.addAttribute("qtdEncerrada", osRepository.countBySituacao("Encerrada"));
+        model.addAttribute("qtdPaga", osRepository.countBySituacao("Paga"));
 
         // 2. Gráfico de Barras (Faturamento dos últimos 6 meses)
         List<String> meses = new ArrayList<>();

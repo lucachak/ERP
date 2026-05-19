@@ -92,10 +92,12 @@
           <td class="text-muted text-truncate" style="max-width: 250px; font-size: 12px;" th:text="${os.problemaReclamado}"></td>
           <td>
              <span class="badge-custom"
-                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: rgba(59,130,246,0.15); border-color: var(--col-aberta)' :
-                             (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: rgba(245,158,11,0.15); border-color: var(--col-aguardando)' :
-                             (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: rgba(6,182,212,0.15); border-color: var(--col-servico)' :
-                             'color: var(--col-encerrada); background: rgba(34,197,94,0.15); border-color: var(--col-encerrada)'))}"
+                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
+                             (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); background: var(--col-aprovada-bg); border-color: var(--col-aprovada)' :
+                             (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: var(--col-aguardando-bg); border-color: var(--col-aguardando)' :
+                             (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)' :
+                             (os.situacao == 'Paga' ? 'color: var(--col-paga); background: var(--col-paga-bg); border-color: var(--col-paga)' :
+                             'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))))}"
                    th:text="${os.situacao}">
              </span>
           </td>

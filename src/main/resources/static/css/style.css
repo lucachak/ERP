@@ -20,9 +20,11 @@
     --btn-primary-text: #09090b;
 
     --col-aberta: #60a5fa; --col-aberta-bg: rgba(96, 165, 250, 0.1);
+    --col-aprovada: #c084fc; --col-aprovada-bg: rgba(192, 132, 252, 0.1);
     --col-aguardando: #fbbf24; --col-aguardando-bg: rgba(251, 191, 36, 0.1);
     --col-servico: #2dd4bf; --col-servico-bg: rgba(45, 212, 191, 0.1);
     --col-encerrada: #34d399; --col-encerrada-bg: rgba(52, 211, 153, 0.1);
+    --col-paga: #10b981; --col-paga-bg: rgba(16, 185, 129, 0.1);
     --col-danger: #f87171; --col-danger-bg: rgba(248, 113, 113, 0.1);
 
     --font-display: 'Plus Jakarta Sans', sans-serif;
@@ -53,9 +55,11 @@
     --btn-primary-text: #ffffff;
 
     --col-aberta: #2563eb; --col-aberta-bg: rgba(37, 99, 235, 0.1);
+    --col-aprovada: #7c3aed; --col-aprovada-bg: rgba(124, 58, 237, 0.1);
     --col-aguardando: #d97706; --col-aguardando-bg: rgba(217, 119, 6, 0.1);
     --col-servico: #0d9488; --col-servico-bg: rgba(13, 148, 136, 0.1);
     --col-encerrada: #059669; --col-encerrada-bg: rgba(5, 150, 105, 0.1);
+    --col-paga: #047857; --col-paga-bg: rgba(4, 120, 87, 0.1);
     --col-danger: #dc2626; --col-danger-bg: rgba(220, 38, 38, 0.1);
 
     --shadow-card: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -2px rgba(0, 0, 0, 0.03);
@@ -167,3 +171,24 @@ body { font-family: var(--font-body); background: var(--bg-base); color: var(--t
 .ts-dropdown .option.active, .ts-dropdown .option:hover { background-color: var(--bg-elevated) !important; color: var(--text-primary) !important; }
 .ts-wrapper.single .ts-control:after { border-color: var(--text-muted) transparent transparent transparent !important; }
 .ts-wrapper .item { color: var(--text-primary) !important; font-weight: 500; }
+
+/* Select de Status Minimalista */
+.status-select-modern {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 30px 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+.status-select-modern:hover { border-color: var(--col-accent); color: var(--text-primary); }
+.status-select-modern:focus { outline: none; border-color: var(--col-accent); box-shadow: 0 0 0 3px var(--col-bg); }

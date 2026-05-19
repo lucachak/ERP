@@ -54,9 +54,11 @@
                         <td>
                             <span class="badge-custom"
                                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
+                                            (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); background: var(--col-aprovada-bg); border-color: var(--col-aprovada)' :
                                             (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: var(--col-aguardando-bg); border-color: var(--col-aguardando)' :
                                             (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)' :
-                                            'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))}"
+                                            (os.situacao == 'Paga' ? 'color: var(--col-paga); background: var(--col-paga-bg); border-color: var(--col-paga)' :
+                                            'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))))}"
                                   th:text="${os.situacao}">
                             </span>
                         </td>
