@@ -52,13 +52,19 @@
                         </td>
                         <td style="color: var(--text-secondary); font-size: 14px;" th:text="${#temporals.format(os.dataEmissao, 'dd/MM/yyyy')}"></td>
                         <td>
-                            <span class="badge-custom"
+                            <!-- Badge com ícone para Encerrada/Paga, texto para demais -->
+                            <span th:if="${os.situacao == 'Encerrada' or os.situacao == 'Paga'}"
+                                  class="badge-custom"
+                                  th:style="${os.situacao == 'Paga' ? 'color: var(--col-paga); background: var(--col-paga-bg); border-color: var(--col-paga); gap: 4px;' : 'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada); gap: 4px;'}">
+                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                                <span th:text="${os.situacao}"></span>
+                            </span>
+                            <span th:if="${os.situacao != 'Encerrada' and os.situacao != 'Paga'}"
+                                  class="badge-custom"
                                   th:style="${os.situacao == 'Aberta' ? 'color: var(--col-aberta); background: var(--col-aberta-bg); border-color: var(--col-aberta)' :
                                             (os.situacao == 'Aprovada' ? 'color: var(--col-aprovada); background: var(--col-aprovada-bg); border-color: var(--col-aprovada)' :
                                             (os.situacao == 'Aguardando Peça' ? 'color: var(--col-aguardando); background: var(--col-aguardando-bg); border-color: var(--col-aguardando)' :
-                                            (os.situacao == 'Em Serviço' ? 'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)' :
-                                            (os.situacao == 'Paga' ? 'color: var(--col-paga); background: var(--col-paga-bg); border-color: var(--col-paga)' :
-                                            'color: var(--col-encerrada); background: var(--col-encerrada-bg); border-color: var(--col-encerrada)'))))}"
+                                            'color: var(--col-servico); background: var(--col-servico-bg); border-color: var(--col-servico)'))}"
                                   th:text="${os.situacao}">
                             </span>
                         </td>

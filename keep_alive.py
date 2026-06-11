@@ -26,7 +26,9 @@ def ping():
             print(
                 f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro: {e}"
             )
-
+        except KeyboardInterrupt:
+            print("quitting..")
+            break
         # Espera um tempo aleatório entre 60 (1 minuto) e 90 (1.5 minutos) segundos
         wait_time = random.randint(60, 90)
         print(f"Aguardando {wait_time} segundos para o próximo request...\n")

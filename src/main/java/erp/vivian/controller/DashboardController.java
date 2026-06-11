@@ -31,35 +31,34 @@ public class DashboardController {
         LocalDateTime fimMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
 
         BigDecimal faturamentoMensal = osRepository.somarFaturamentoMensal(inicioMes, fimMes);
-        long osAbertas = osRepository.countBySituacao("Aberta")
-                       + osRepository.countBySituacao("Aprovada")
-                       + osRepository.countBySituacao("Aguardando Peça")
-                       + osRepository.countBySituacao("Em Serviço");
+        List<Object[]> contagens = osRepository.countAgrupadoPorSituacao();
+        long qtdAberta = 0, qtdAprovada = 0, qtdAguardando = 0, qtdServico = 0, qtdEncerrada = 0, qtdPaga = 0;
+        for (Object[] contagem : contagens) {
+            String situacao = (String) contagem[0];
+            long count = ((Number) contagem[1]).longValue();
+            if ("Aberta".equals(situacao)) qtdAberta = count;
+            else if ("Aprovada".equals(situacao)) qtdAprovada = count;
+            else if ("Aguardando Peça".equals(situacao)) qtdAguardando = count;
+            else if ("Em Serviço".equals(situacao)) qtdServico = count;
+            else if ("Encerrada".equals(situacao)) qtdEncerrada = count;
+            else if ("Paga".equals(situacao)) qtdPaga = count;
+        }
+
+        long osAbertas = qtdAberta + qtdAprovada + qtdAguardando + qtdServico;
         long alertasEstoque = pecaRepository.countByQuantidadeEstoqueLessThanEqual(2.0);
 
-        List<OrdemServico> encerradasList = new ArrayList<>();
-        encerradasList.addAll(osRepository.findBySituacao("Encerrada"));
-        encerradasList.addAll(osRepository.findBySituacao("Paga"));
-        
-        long totalHoras = 0;
-        int osValidas = 0;
-        for (OrdemServico o : encerradasList) {
-            if (o.getDataEntrega() != null && o.getDataEmissao() != null) {
-                totalHoras += java.time.Duration.between(o.getDataEmissao(), o.getDataEntrega()).toHours();
-                osValidas++;
-            }
-        }
-        long tempoMedioHoras = osValidas == 0 ? 0 : totalHoras / osValidas;
+        Double mediaBD = osRepository.calcularTempoMedioHoras();
+        long tempoMedioHoras = mediaBD != null ? mediaBD.longValue() : 0;
 
         // --- NOVO: LÓGICA PARA OS GRÁFICOS ---
 
         // 1. Gráfico de Rosca (Status das O.S.)
-        model.addAttribute("qtdAberta", osRepository.countBySituacao("Aberta"));
-        model.addAttribute("qtdAprovada", osRepository.countBySituacao("Aprovada"));
-        model.addAttribute("qtdAguardando", osRepository.countBySituacao("Aguardando Peça"));
-        model.addAttribute("qtdServico", osRepository.countBySituacao("Em Serviço"));
-        model.addAttribute("qtdEncerrada", osRepository.countBySituacao("Encerrada"));
-        model.addAttribute("qtdPaga", osRepository.countBySituacao("Paga"));
+        model.addAttribute("qtdAberta", qtdAberta);
+        model.addAttribute("qtdAprovada", qtdAprovada);
+        model.addAttribute("qtdAguardando", qtdAguardando);
+        model.addAttribute("qtdServico", qtdServico);
+        model.addAttribute("qtdEncerrada", qtdEncerrada);
+        model.addAttribute("qtdPaga", qtdPaga);
 
         // 2. Gráfico de Barras (Faturamento dos últimos 6 meses)
         List<String> meses = new ArrayList<>();
