@@ -34,6 +34,25 @@ public class SetupInicial implements CommandLineRunner {
       System.out.println("SETUP INICIAL: O usuário 'lucas' já existe no banco de dados.");
       System.out.println("=========================================");
     }
+
+    if (repository.findByUsername("demo").isEmpty()) {
+      Usuario demo = new Usuario();
+      demo.setUsername("demo");
+      demo.setPassword(passwordEncoder.encode("demo"));
+      demo.setRole("ROLE_DEMO");
+
+      repository.save(demo);
+
+      System.out.println("=========================================");
+      System.out.println("USUÁRIO DEMO CRIADO COM SUCESSO!");
+      System.out.println("Login: demo");
+      System.out.println("Senha: demo");
+      System.out.println("=========================================");
+    } else {
+      System.out.println("=========================================");
+      System.out.println("SETUP INICIAL: O usuário 'demo' já existe no banco de dados.");
+      System.out.println("=========================================");
+    }
   }
 }
 

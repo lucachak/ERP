@@ -19,8 +19,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**", "/img/**").permitAll()
-                        // APENAS O CHEFE (ADMIN) PODE ENTRAR AQUI:
-                        .requestMatchers("/caixa/**", "/relatorios/**", "/usuarios/**", "/backup/**", "/", "/dashboard", "/agenda/**", "/os/kanban").hasRole("ADMIN")
+                        // APENAS O CHEFE (ADMIN) E VISITANTES (DEMO) PODEM ENTRAR AQUI:
+                        .requestMatchers("/caixa/**", "/relatorios/**", "/usuarios/**", "/backup/**", "/", "/dashboard", "/agenda/**", "/os/kanban").hasAnyRole("ADMIN", "DEMO")
                         // O RESTO É LIVRE PARA QUEM ESTIVER LOGADO (Mecânicos):
                         .anyRequest().authenticated()
                 )
