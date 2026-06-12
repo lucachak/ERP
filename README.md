@@ -16,6 +16,23 @@
 
 ---
 
+## 📸 Screenshots
+
+Here is a glimpse of the system in action:
+
+<div align="center">
+  <img src="docs/images/dashboard-dark.png" alt="Dashboard - Dark Mode" width="800"/>
+  <p><em>Dashboard (Dark Mode) — Real-time KPIs and Charts</em></p>
+
+  <img src="docs/images/os-dark.png" alt="Ordens de Serviço - Dark Mode" width="800"/>
+  <p><em>Service Orders List — Fast paginated search</em></p>
+
+  <img src="docs/images/login.png" alt="Login Page" width="800"/>
+  <p><em>Login Screen with Demo Mode integration</em></p>
+</div>
+
+---
+
 ## ✨ Features
 
 ### 📄 Service Orders (SO)
