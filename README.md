@@ -267,8 +267,8 @@ The application will be available at **http://localhost:8080**
 
 | Field | Value |
 |---|---|
-| User | `dalva` |
-| Password | `dalva` |
+| User | `lucas` |
+| Password | `lucas` |
 | Profile | `ADMIN` |
 
 > ⚠️ **Change the default password immediately** after first access at **/perfil**.
