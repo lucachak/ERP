@@ -252,8 +252,8 @@ src/main/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/lucachak/Gen.git
-cd Gen
+git clone https://github.com/lucachak/ERP.git
+cd ERP
 ```
 
 ### 2. Configure environment variables
