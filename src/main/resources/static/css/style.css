@@ -67,6 +67,10 @@
 
 body { font-family: var(--font-body); background: var(--bg-base); color: var(--text-primary); min-height: 100vh; margin: 0; -webkit-font-smoothing: antialiased; transition: background-color 0.3s ease, color 0.3s ease;}
 
+/* Ocultar barra de rolagem mas permitir scroll */
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Efeitos de Fundo (Ajustados para não pesar no modo claro) */
 .bg-grid { position: fixed; inset: 0; z-index: -10; pointer-events: none; background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 20%, transparent 100%); -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 20%, transparent 100%); }
 
